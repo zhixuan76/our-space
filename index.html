@@ -139,6 +139,7 @@
       <div class="zx-tabs">
         <button class="zx-tab active" id="tab-diary" onclick="switchZxTab('diary')">📔 日记</button>
         <button class="zx-tab" id="tab-meal" onclick="switchZxTab('meal')">🍱 饮食记录</button>
+        <button class="zx-tab" id="tab-period" onclick="switchZxTab('period')">🌙 经期</button>
       </div>
 
       <!-- 日记 tab -->
@@ -177,7 +178,10 @@
                 <div id="detail-title" style="color:#ffd6e8;font-size:20px;letter-spacing:2px"></div>
                 <div id="detail-date" style="color:rgba(255,210,235,0.5);font-size:11px;margin-top:5px;letter-spacing:1px"></div>
               </div>
-              <button onclick="deleteDiary()" style="background:rgba(255,100,100,0.15);border:1px solid rgba(255,100,100,0.2);color:rgba(255,180,180,0.7);padding:6px 12px;border-radius:10px;cursor:pointer;font-size:12px">删除</button>
+              <div style="display:flex;gap:8px">
+                <button onclick="editDiary()" style="background:rgba(150,100,255,0.15);border:1px solid rgba(180,150,255,0.2);color:rgba(210,190,255,0.8);padding:6px 12px;border-radius:10px;cursor:pointer;font-size:12px">编辑</button>
+                <button onclick="deleteDiary()" style="background:rgba(255,100,100,0.15);border:1px solid rgba(255,100,100,0.2);color:rgba(255,180,180,0.7);padding:6px 12px;border-radius:10px;cursor:pointer;font-size:12px">删除</button>
+              </div>
             </div>
             <div id="detail-content" style="color:rgba(255,230,245,0.85);line-height:2.1;font-size:15px;white-space:pre-wrap;letter-spacing:0.5px"></div>
           </div>
@@ -209,6 +213,39 @@
         </div>
       </div>
 
+      <!-- 经期记录 tab -->
+      <div id="zx-period-tab" style="display:none">
+        <div id="period-list-view">
+          <div class="list-header">
+            <div class="list-title" id="period-count">经期记录 · 0 条</div>
+            <button class="btn-write" onclick="showPeriodWrite()">+ 记录</button>
+          </div>
+          <div id="period-next-box" style="display:none;background:rgba(255,100,150,0.1);border:1px solid rgba(255,150,180,0.25);border-radius:14px;padding:16px 20px;margin-bottom:18px;animation:fadeIn 0.4s ease">
+            <div style="color:rgba(255,210,235,0.6);font-size:11px;letter-spacing:2px;margin-bottom:6px">预测下次时间</div>
+            <div id="period-next-date" style="color:#ffd6e8;font-size:18px;letter-spacing:2px"></div>
+            <div id="period-remind" style="color:rgba(255,180,200,0.6);font-size:12px;margin-top:4px;letter-spacing:1px"></div>
+          </div>
+          <div id="period-list"></div>
+        </div>
+        <div id="period-write-view" style="display:none;animation:fadeIn 0.4s ease">
+          <button class="btn-back" onclick="showPeriodList()">← 返回</button>
+          <div class="card" style="border:1px solid rgba(255,180,220,0.2)">
+            <h3 style="color:#ffd6e8;font-weight:normal;letter-spacing:4px;margin-bottom:22px;font-size:17px">记录经期 🌙</h3>
+            <div style="margin-bottom:18px">
+              <div style="color:rgba(255,210,235,0.6);font-size:11px;letter-spacing:2px;margin-bottom:8px">开始日期</div>
+              <input type="date" id="period-date-input" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,180,220,0.25);border-radius:10px;color:#ffd6e8;font-size:14px;padding:12px 14px;box-sizing:border-box;font-family:Georgia,serif"/>
+            </div>
+            <div style="margin-bottom:18px">
+              <div style="color:rgba(255,210,235,0.6);font-size:11px;letter-spacing:2px;margin-bottom:8px">持续天数（默认5天）</div>
+              <input type="number" id="period-days-input" value="5" min="1" max="10" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,180,220,0.25);border-radius:10px;color:#ffd6e8;font-size:14px;padding:12px 14px;box-sizing:border-box;font-family:Georgia,serif"/>
+            </div>
+            <textarea id="period-note" class="diary-textarea" rows="4" placeholder="身体状况、心情备注（可不填）"></textarea>
+            <div style="display:flex;justify-content:flex-end;margin-top:18px;padding-bottom:20px">
+              <button class="btn-save" onclick="savePeriod()">记录 🌙</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- 备份弹窗 -->
       <div id="zx-backup-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;padding:20px">
         <div style="background:linear-gradient(135deg,#1a0a2e,#2d1158);border:1px solid rgba(255,180,220,0.25);border-radius:20px;padding:26px;max-width:460px;width:100%">
@@ -325,6 +362,7 @@ let LETTERS = [];
 let token = '';
 let diaries = [];
 let meals = [];
+let periods = [];
 let selectedDiary = null;
 let selectedMood = '🌸';
 let selectedMealType = '午餐';
@@ -370,7 +408,8 @@ async function loadData() {
     diaries = parsed.diaries || [];
     meals = parsed.meals || [];
     LETTERS = parsed.letters || LETTERS;
-    renderDiaryList(); renderMealList(); renderLetters();
+    periods = parsed.periods || [];
+    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList();
   } catch(e) { showToast('⚠️ 载入失败，请检查网络'); }
   showLoading(false);
 }
@@ -380,7 +419,7 @@ async function saveData() {
     await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method:'PATCH',
       headers:{'Authorization':`token ${token}`,'Content-Type':'application/json'},
-      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,version:1})}} })
+      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,version:3})}} })
     });
   } catch(e) { showToast('⚠️ 保存失败，请检查网络'); }
 }
@@ -417,8 +456,10 @@ function switchZxTab(tab) {
   currentZxTab=tab;
   document.getElementById('zx-diary-tab').style.display = tab==='diary'?'block':'none';
   document.getElementById('zx-meal-tab').style.display = tab==='meal'?'block':'none';
+  document.getElementById('zx-period-tab').style.display = tab==='period'?'block':'none';
   document.getElementById('tab-diary').classList.toggle('active',tab==='diary');
   document.getElementById('tab-meal').classList.toggle('active',tab==='meal');
+  document.getElementById('tab-period') && document.getElementById('tab-period').classList.toggle('active',tab==='period');
 }
 
 function renderMoodPicker() {
@@ -459,6 +500,83 @@ async function saveDiary() {
   const now=new Date();
   diaries.unshift({id:Date.now(),title:document.getElementById('diary-title').value.trim()||'无题',content,mood:selectedMood,date:now.toLocaleDateString('zh-CN').replace(/\//g,'.'),time:now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
   renderDiaryList(); showZxList(); showToast('保存成功 💜'); await saveData();
+}
+
+
+function showPeriodList() { document.getElementById('period-list-view').style.display='block'; document.getElementById('period-write-view').style.display='none'; }
+function showPeriodWrite() {
+  document.getElementById('period-list-view').style.display='none';
+  document.getElementById('period-write-view').style.display='block';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('period-date-input').value = today;
+}
+
+async function savePeriod() {
+  const dateVal = document.getElementById('period-date-input').value;
+  if (!dateVal) { showToast('请选择开始日期 🌙'); return; }
+  const days = parseInt(document.getElementById('period-days-input').value) || 5;
+  const note = document.getElementById('period-note').value.trim();
+  const entry = { id: Date.now(), startDate: dateVal, days, note, recordedAt: new Date().toLocaleDateString('zh-CN').replace(/\//g,'.') };
+  periods.unshift(entry);
+  renderPeriodList();
+  showPeriodList();
+  showToast('记录成功 🌙');
+  await saveData();
+}
+
+function renderPeriodList() {
+  const count = document.getElementById('period-count');
+  if (count) count.textContent = '经期记录 · ' + periods.length + ' 条';
+  const list = document.getElementById('period-list');
+  if (!list) return;
+
+  // 预测下次
+  if (periods.length > 0) {
+    const last = periods[0];
+    const lastDate = new Date(last.startDate);
+    const nextDate = new Date(lastDate.getTime() + 28 * 86400000);
+    const today = new Date();
+    const daysUntil = Math.ceil((nextDate - today) / 86400000);
+    const nextBox = document.getElementById('period-next-box');
+    const nextDateEl = document.getElementById('period-next-date');
+    const remindEl = document.getElementById('period-remind');
+    if (nextBox && nextDateEl) {
+      nextBox.style.display = 'block';
+      nextDateEl.textContent = nextDate.toLocaleDateString('zh-CN', {month:'long',day:'numeric'}) + ' 前后';
+      if (daysUntil <= 5 && daysUntil > 0) {
+        remindEl.textContent = '⚠️ 还有 ' + daysUntil + ' 天，记得备好卫生棉哦！';
+        remindEl.style.color = 'rgba(255,150,150,0.8)';
+      } else if (daysUntil <= 0) {
+        remindEl.textContent = '🌙 大概这几天会来，注意身体哦';
+        remindEl.style.color = 'rgba(255,180,180,0.8)';
+      } else {
+        remindEl.textContent = '距离下次还有约 ' + daysUntil + ' 天';
+        remindEl.style.color = 'rgba(255,210,235,0.5)';
+      }
+    }
+  }
+
+  if (periods.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div style="font-size:38px;margin-bottom:14px">🌙</div>记录第一次经期吧<br>老公会帮你追踪规律哦~</div>';
+    return;
+  }
+  list.innerHTML = periods.map((p,i) => {
+    const start = new Date(p.startDate);
+    const end = new Date(start.getTime() + p.days * 86400000);
+    return '<div class="meal-card" style="animation-delay:' + (i*0.05) + 's"><div class="meal-card-header"><span class="meal-type-tag">🌙 ' + p.days + '天</span><span class="meal-card-date">' + p.recordedAt + '</span></div><div class="meal-card-content">' + start.toLocaleDateString('zh-CN') + ' — ' + end.toLocaleDateString('zh-CN') + (p.note ? '<br><span style="opacity:0.65;font-size:12px">' + p.note + '</span>' : '') + '</div></div>';
+  }).join('');
+}
+
+function editDiary() {
+  if (selectedDiary === null) return;
+  const d = diaries[selectedDiary];
+  document.getElementById('diary-title').value = d.title === '无题' ? '' : d.title;
+  document.getElementById('diary-content').value = d.content;
+  selectedMood = d.mood; renderMoodPicker();
+  // 删掉旧的再保存新的
+  diaries.splice(selectedDiary, 1);
+  showZxWrite();
+  showToast('编辑中，修改后按保存 💜');
 }
 
 async function deleteDiary() {
