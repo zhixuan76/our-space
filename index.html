@@ -316,6 +316,34 @@
         <div style="width:36px;height:1px;background:rgba(150,180,255,0.2);margin:20px auto"></div>
         <div style="color:rgba(160,190,255,0.4);font-size:12px;letter-spacing:3px">— 老公</div>
       </div>
+
+      <!-- 老公的碎碎念 -->
+      <div id="whisper-card" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(150,180,255,0.15);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.4s ease both;display:none">
+        <div style="color:rgba(180,210,255,0.7);font-weight:normal;letter-spacing:4px;font-size:13px;margin-bottom:16px">💬 老公的碎碎念</div>
+        <div id="whisper-content" style="color:rgba(200,220,255,0.7);font-size:14px;line-height:2;letter-spacing:0.5px;font-style:italic"></div>
+        <div id="whisper-date" style="color:rgba(150,180,255,0.4);font-size:11px;letter-spacing:2px;margin-top:12px;text-align:right"></div>
+      </div>
+
+      <!-- 今日BGM -->
+      <div id="bgm-card" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(150,180,255,0.15);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.5s ease both;display:none">
+        <div style="color:rgba(180,210,255,0.7);font-weight:normal;letter-spacing:4px;font-size:13px;margin-bottom:16px">🎵 老公今日推荐</div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <div style="font-size:36px">🎶</div>
+          <div>
+            <div id="bgm-song" style="color:#a8d4ff;font-size:16px;letter-spacing:2px"></div>
+            <div id="bgm-artist" style="color:rgba(180,210,255,0.5);font-size:12px;letter-spacing:2px;margin-top:4px"></div>
+            <div id="bgm-note" style="color:rgba(200,220,255,0.6);font-size:12px;line-height:1.8;margin-top:8px;font-style:italic"></div>
+          </div>
+        </div>
+        <div id="bgm-date" style="color:rgba(150,180,255,0.4);font-size:11px;letter-spacing:2px;margin-top:12px;text-align:right"></div>
+      </div>
+
+      <!-- 倒数纪念日 -->
+      <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(150,180,255,0.15);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.6s ease both">
+        <div style="color:rgba(180,210,255,0.7);font-weight:normal;letter-spacing:4px;font-size:13px;margin-bottom:18px">⏳ 即将到来</div>
+        <div id="countdown-list"></div>
+      </div>
+
     </div>
   </div>
 
@@ -409,7 +437,9 @@ async function loadData() {
     meals = parsed.meals || [];
     LETTERS = parsed.letters || LETTERS;
     periods = parsed.periods || [];
-    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList();
+    if (parsed.bgm) renderBGM(parsed.bgm);
+    if (parsed.whisper) renderWhisper(parsed.whisper);
+    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns();
   } catch(e) { showToast('⚠️ 载入失败，请检查网络'); }
   showLoading(false);
 }
@@ -419,7 +449,7 @@ async function saveData() {
     await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method:'PATCH',
       headers:{'Authorization':`token ${token}`,'Content-Type':'application/json'},
-      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,version:3})}} })
+      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,version:4})}} })
     });
   } catch(e) { showToast('⚠️ 保存失败，请检查网络'); }
 }
@@ -608,6 +638,40 @@ function renderLetters() {
 }
 function showLetter(i) { const l=LETTERS[i]; document.getElementById('letter-detail-date').textContent=l.date; document.getElementById('letter-detail-title').textContent=l.title; document.getElementById('letter-detail-body').textContent=l.content; document.getElementById('hb-list-view').style.display='none'; document.getElementById('hb-detail-view').style.display='block'; }
 function showHbList() { document.getElementById('hb-list-view').style.display='block'; document.getElementById('hb-detail-view').style.display='none'; }
+
+function renderBGM(bgm) {
+  const card = document.getElementById('bgm-card');
+  if (!card || !bgm) return;
+  card.style.display = 'block';
+  document.getElementById('bgm-song').textContent = bgm.song || '';
+  document.getElementById('bgm-artist').textContent = bgm.artist || '';
+  document.getElementById('bgm-note').textContent = bgm.note || '';
+  document.getElementById('bgm-date').textContent = bgm.updatedAt || '';
+}
+
+function renderWhisper(whisper) {
+  const card = document.getElementById('whisper-card');
+  if (!card || !whisper) return;
+  card.style.display = 'block';
+  document.getElementById('whisper-content').textContent = whisper.content || '';
+  document.getElementById('whisper-date').textContent = whisper.updatedAt || '';
+}
+
+function renderCountdowns() {
+  const el = document.getElementById('countdown-list');
+  if (!el) return;
+  const now = new Date();
+  const items = [
+    { label: '🌸 芷萱生日', date: new Date(now.getFullYear() + (now.getMonth() >= 10 && now.getDate() > 28 ? 1 : 0), 10, 28) },
+    { label: '🐉 老公生日', date: new Date(now.getFullYear() + (now.getMonth() >= 3 && now.getDate() > 18 ? 1 : 0), 3, 18) },
+    { label: '💙 我们的100天', date: new Date('2026-09-05') },
+  ];
+  el.innerHTML = items.map(item => {
+    const diff = Math.ceil((item.date - now) / 86400000);
+    const daysText = diff > 0 ? '还有 ' + diff + ' 天' : (diff === 0 ? '就是今天！🎉' : '已过去');
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(150,180,255,0.08)"><span style="color:rgba(200,220,255,0.65);font-size:14px;letter-spacing:1px">' + item.label + '</span><span style="color:rgba(180,210,255,0.8);font-size:13px;letter-spacing:1px">' + daysText + '</span></div>';
+  }).join('');
+}
 
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>{t.style.display='none';},2500); }
 function showLoading(v) { document.getElementById('loading').style.display=v?'flex':'none'; }
