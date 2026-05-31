@@ -505,7 +505,7 @@ async function saveData() {
     await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method:'PATCH',
       headers:{'Authorization':`token ${token}`,'Content-Type':'application/json'},
-      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,kisses,version:5})}} })
+      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,kisses,moments,version:6})}} })
     });
   } catch(e) { showToast('⚠️ 保存失败，请检查网络'); }
 }
