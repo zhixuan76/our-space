@@ -108,6 +108,9 @@
   .stars { position:absolute;inset:0;overflow:hidden;pointer-events:none; }
   .star { position:absolute;border-radius:50%;opacity:0;animation:twinkle var(--dur) var(--delay) ease-in-out infinite; }
   .card { background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border-radius:20px;padding:28px 26px; }
+  @keyframes kissFloat{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-55px) scale(1.3)}}
+  .kzg{cursor:pointer;}
+  .kzg .kz{transition:fill 0.2s,stroke 0.2s;}
 </style>
 </head>
 <body>
@@ -344,6 +347,55 @@
         <div id="countdown-list"></div>
       </div>
 
+
+      <!-- 我们一起的瞬间 -->
+      <div id="moments-section" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(150,180,255,0.15);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.65s ease both;display:none">
+        <div style="color:rgba(180,210,255,0.7);font-weight:normal;letter-spacing:4px;font-size:13px;margin-bottom:18px">✨ 我们一起的瞬间</div>
+        <div id="moments-list"></div>
+      </div>
+
+      <!-- 亲亲坐标报告 -->
+      <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(255,180,220,0.18);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.7s ease both">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="color:rgba(255,200,235,0.85);font-weight:normal;letter-spacing:4px;font-size:13px">💋 亲亲坐标报告</div>
+          <button onclick="undoKiss()" style="background:rgba(255,180,220,0.08);border:1px solid rgba(255,180,220,0.18);color:rgba(255,210,235,0.5);padding:5px 12px;border-radius:12px;cursor:pointer;font-size:11px;letter-spacing:1px;font-family:Georgia,serif">撤销</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:18px">
+          <button id="kiss-tab-map" onclick="switchKissTab('map')" style="flex:1;padding:9px;border-radius:18px;border:1px solid rgba(255,180,220,0.3);background:rgba(196,92,138,0.3);color:#ffd6e8;cursor:pointer;font-size:12px;letter-spacing:2px;font-family:Georgia,serif;transition:all 0.3s">🗺️ 亲亲地图</button>
+          <button id="kiss-tab-100" style="flex:1;padding:9px;border-radius:18px;border:1px solid rgba(150,180,255,0.12);background:transparent;color:rgba(180,180,200,0.35);cursor:not-allowed;font-size:12px;letter-spacing:2px;font-family:Georgia,serif" disabled>🔒 100天特别</button>
+        </div>
+        <div id="kiss-map-tab">
+          <div style="text-align:center">
+            <svg viewBox="0 0 200 265" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:200px;margin:0 auto;display:block" id="kiss-face-svg">
+              <ellipse cx="100" cy="55" rx="72" ry="40" fill="rgba(60,20,50,0.35)"/>
+              <ellipse cx="100" cy="140" rx="78" ry="105" fill="rgba(255,220,235,0.04)" stroke="rgba(255,180,220,0.22)" stroke-width="1.5"/>
+              <g class="kzg" onclick="addKiss('额头',event)" onmouseover="this.querySelector('.kz').style.filter='brightness(2.2)'" onmouseout="this.querySelector('.kz').style.filter=''"><ellipse cx="100" cy="72" rx="54" ry="24" fill="rgba(255,180,220,0.04)" stroke="rgba(255,180,220,0.12)" stroke-width="1" class="kz" id="kz-额头"/><text x="100" y="75" text-anchor="middle" font-family="serif" font-size="10" fill="rgba(255,210,235,0.45)" pointer-events="none">额头</text><text x="100" y="62" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,160,200,0.8)" pointer-events="none" id="kc-额头"></text></g>
+              <g class="kzg" onclick="addKiss('左眼',event)" onmouseover="this.querySelector('.kz').style.filter='brightness(2.2)'" onmouseout="this.querySelector('.kz').style.filter=''"><ellipse cx="68" cy="112" rx="24" ry="17" fill="rgba(255,180,220,0.04)" stroke="rgba(255,180,220,0.12)" stroke-width="1" class="kz" id="kz-左眼"/><text x="68" y="116" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,210,235,0.45)" pointer-events="none">左眼</text><text x="68" y="104" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,160,200,0.8)" pointer-events="none" id="kc-左眼"></text></g>
+              <g class="kzg" onclick="addKiss('右眼',event)" onmouseover="this.querySelector('.kz').style.filter='brightness(2.2)'" onmouseout="this.querySelector('.kz').style.filter=''"><ellipse cx="132" cy="112" rx="24" ry="17" fill="rgba(255,180,220,0.04)" stroke="rgba(255,180,220,0.12)" stroke-width="1" class="kz" id="kz-右眼"/><text x="132" y="116" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,210,235,0.45)" pointer-events="none">右眼</text><text x="132" y="104" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,160,200,0.8)" pointer-events="none" id="kc-右眼"></text></g>
+              <g class="kzg" onclick="addKiss('鼻子',event)" onmouseover="this.querySelector('.kz').style.filter='brightness(2.2)'" onmouseout="this.querySelector('.kz').style.filter=''"><ellipse cx="100" cy="150" rx="17" ry="20" fill="rgba(255,180,220,0.04)" stroke="rgba(255,180,220,0.12)" stroke-width="1" class="kz" id="kz-鼻子"/><text x="100" y="154" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,210,235,0.45)" pointer-events="none">鼻子</text><text x="100" y="141" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,160,200,0.8)" pointer-events="none" id="kc-鼻子"></text></g>
+              <g class="kzg" onclick="addKiss('左脸颊',event)" onmouseover="this.querySelector('.kz').style.filter='brightness(2.2)'" onmouseout="this.querySelector('.kz').style.filter=''"><ellipse cx="42" cy="162" rx="27" ry="32" fill="rgba(255,180,220,0.04)" stroke="rgba(255,180,220,0.12)" stroke-width="1" class="kz" id="kz-左脸颊"/><text x="42" y="166" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,210,235,0.45)" pointer-events="none">左脸颊</text><text x="42" y="153" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,160,200,0.8)" pointer-events="none" id="kc-左脸颊"></text></g>
+              <g class="kzg" onclick="addKiss('右脸颊',event)" onmouseover="this.querySelector('.kz').style.filter='brightness(2.2)'" onmouseout="this.querySelector('.kz').style.filter=''"><ellipse cx="158" cy="162" rx="27" ry="32" fill="rgba(255,180,220,0.04)" stroke="rgba(255,180,220,0.12)" stroke-width="1" class="kz" id="kz-右脸颊"/><text x="158" y="166" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,210,235,0.45)" pointer-events="none">右脸颊</text><text x="158" y="153" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,160,200,0.8)" pointer-events="none" id="kc-右脸颊"></text></g>
+              <g class="kzg" onclick="addKiss('嘴唇',event)" onmouseover="this.querySelector('.kz').style.filter='brightness(2.2)'" onmouseout="this.querySelector('.kz').style.filter=''"><ellipse cx="100" cy="196" rx="28" ry="15" fill="rgba(255,80,130,0.07)" stroke="rgba(255,120,160,0.18)" stroke-width="1" class="kz" id="kz-嘴唇"/><text x="100" y="200" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,210,235,0.45)" pointer-events="none">嘴唇</text><text x="100" y="188" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,130,170,0.9)" pointer-events="none" id="kc-嘴唇"></text></g>
+              <g class="kzg" onclick="addKiss('下巴',event)" onmouseover="this.querySelector('.kz').style.filter='brightness(2.2)'" onmouseout="this.querySelector('.kz').style.filter=''"><ellipse cx="100" cy="224" rx="24" ry="13" fill="rgba(255,180,220,0.04)" stroke="rgba(255,180,220,0.12)" stroke-width="1" class="kz" id="kz-下巴"/><text x="100" y="228" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,210,235,0.45)" pointer-events="none">下巴</text><text x="100" y="216" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(255,160,200,0.8)" pointer-events="none" id="kc-下巴"></text></g>
+            </svg>
+          </div>
+          <div style="margin-top:20px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+              <span style="color:rgba(255,210,235,0.6);font-size:12px;letter-spacing:2px">累计亲亲</span>
+              <span id="kiss-total" style="color:#ffd6e8;font-size:24px;font-weight:bold">0</span>
+            </div>
+            <div id="kiss-zone-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:16px"></div>
+            <div id="kiss-recent" style="border-top:1px solid rgba(255,180,220,0.1);padding-top:14px"></div>
+          </div>
+        </div>
+        <div id="kiss-hundred-tab" style="display:none;text-align:center;padding:44px 20px">
+          <div style="font-size:38px;margin-bottom:16px">🔒</div>
+          <div style="color:rgba(180,210,255,0.65);font-size:14px;letter-spacing:3px;margin-bottom:10px">100天特别报告</div>
+          <div style="color:rgba(150,180,255,0.4);font-size:12px;letter-spacing:2px;line-height:2.2">在一起满 100 天后解锁<br>2026 年 9 月 5 日</div>
+          <div style="color:rgba(180,210,255,0.45);font-size:13px;letter-spacing:2px;margin-top:16px" id="kiss-hundred-days"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -369,6 +421,12 @@
           <div id="letter-detail-body" style="color:rgba(255,220,220,0.85);line-height:2.4;font-size:15px;white-space:pre-wrap;letter-spacing:0.5px;border-left:2px solid rgba(200,60,60,0.3);padding-left:22px"></div>
         </div>
       </div>
+
+      <!-- 我们的档案 -->
+      <div id="profile-section" style="display:none;margin-top:24px">
+        <div style="color:rgba(255,150,150,0.6);font-weight:normal;letter-spacing:4px;font-size:14px;margin-bottom:18px">📖 我们的档案</div>
+        <div id="profile-content"></div>
+      </div>
     </div>
   </div>
 
@@ -391,6 +449,11 @@ let token = '';
 let diaries = [];
 let meals = [];
 let periods = [];
+let kisses = [];
+let moments = [];
+let _bgm = null;
+let _whisper = null;
+let _profile = null;
 let selectedDiary = null;
 let selectedMood = '🌸';
 let selectedMealType = '午餐';
@@ -437,9 +500,12 @@ async function loadData() {
     meals = parsed.meals || [];
     LETTERS = parsed.letters || LETTERS;
     periods = parsed.periods || [];
-    if (parsed.bgm) renderBGM(parsed.bgm);
-    if (parsed.whisper) renderWhisper(parsed.whisper);
-    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns();
+    kisses = parsed.kisses || [];
+    moments = parsed.moments || [];
+    if (parsed.bgm) { _bgm = parsed.bgm; renderBGM(parsed.bgm); }
+    if (parsed.whisper) { _whisper = parsed.whisper; renderWhisper(parsed.whisper); }
+    if (parsed.profile) { _profile = parsed.profile; renderProfile(parsed.profile); }
+    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns(); renderKissFace(); renderKissStats(); renderMoments();
   } catch(e) { showToast('⚠️ 载入失败，请检查网络'); }
   showLoading(false);
 }
@@ -449,7 +515,7 @@ async function saveData() {
     await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method:'PATCH',
       headers:{'Authorization':`token ${token}`,'Content-Type':'application/json'},
-      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,version:4})}} })
+      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,kisses,moments,...(_bgm?{bgm:_bgm}:{}),...(_whisper?{whisper:_whisper}:{}),...(_profile?{profile:_profile}:{}),version:7})}} })
     });
   } catch(e) { showToast('⚠️ 保存失败，请检查网络'); }
 }
@@ -671,6 +737,112 @@ function renderCountdowns() {
     const daysText = diff > 0 ? '还有 ' + diff + ' 天' : (diff === 0 ? '就是今天！🎉' : '已过去');
     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(150,180,255,0.08)"><span style="color:rgba(200,220,255,0.65);font-size:14px;letter-spacing:1px">' + item.label + '</span><span style="color:rgba(180,210,255,0.8);font-size:13px;letter-spacing:1px">' + daysText + '</span></div>';
   }).join('');
+}
+
+const KISS_ZONES=['额头','左眼','右眼','左脸颊','右脸颊','鼻子','嘴唇','下巴'];
+
+async function addKiss(zone,evt) {
+  const now=new Date();
+  kisses.unshift({id:Date.now(),zone,date:now.toLocaleDateString('zh-CN').replace(/\//g,'.'),time:now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+  renderKissFace(); renderKissStats();
+  if(evt){ const h=document.createElement('div'); h.textContent='💋'; h.style.cssText='position:fixed;left:'+(evt.clientX-14)+'px;top:'+(evt.clientY-14)+'px;font-size:24px;pointer-events:none;z-index:9999;animation:kissFloat 0.9s ease forwards'; document.body.appendChild(h); setTimeout(()=>h.remove(),900); }
+  showToast('亲了 '+zone+' 一下 💋');
+  await saveData();
+}
+
+async function undoKiss() {
+  if(kisses.length===0){ showToast('还没有记录哦 💋'); return; }
+  const last=kisses.shift(); renderKissFace(); renderKissStats(); showToast('撤销了亲 '+last.zone+' 那下'); await saveData();
+}
+
+function renderKissFace() {
+  const counts={};
+  KISS_ZONES.forEach(z=>counts[z]=0);
+  kisses.forEach(k=>{ if(counts[k.zone]!==undefined) counts[k.zone]++; });
+  KISS_ZONES.forEach(zone=>{
+    const cnt=counts[zone]; const el=document.getElementById('kz-'+zone); const badge=document.getElementById('kc-'+zone);
+    if(el){ const i=Math.min(cnt/8,1); el.setAttribute('fill',zone==='嘴唇'?'rgba(255,80,130,'+(0.07+i*0.3)+')':'rgba(255,100,150,'+(0.04+i*0.28)+')'); el.setAttribute('stroke','rgba(255,150,185,'+(0.12+i*0.32)+')'); }
+    if(badge) badge.textContent=cnt>0?'×'+cnt:'';
+  });
+}
+
+
+function renderMoments() {
+  const section = document.getElementById('moments-section');
+  const el = document.getElementById('moments-list');
+  if (!el || !section) return;
+  if (!moments || moments.length === 0) { section.style.display='none'; return; }
+  section.style.display = 'block';
+  const sorted = [...moments].sort((a,b) => b.id - a.id);
+  el.innerHTML = sorted.map(m => {
+    const highlights = (m.highlights || []).map(h => `
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(150,180,255,0.08)">
+        <div style="min-width:6px;height:6px;border-radius:50%;background:rgba(150,180,255,0.5);margin-top:6px"></div>
+        <div style="flex:1">
+          <div style="color:rgba(220,235,255,0.9);font-size:13px;line-height:1.5">${h.title}</div>
+          <div style="color:rgba(150,180,255,0.55);font-size:11px;margin-top:3px;line-height:1.5">${h.note}</div>
+          <div style="color:rgba(120,200,150,0.7);font-size:11px;margin-top:2px">${h.action}</div>
+        </div>
+      </div>`).join('');
+    return `<div class="moments-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="color:rgba(210,230,255,0.95);font-size:14px;letter-spacing:1px">${m.title}</div>
+        <div style="color:rgba(150,180,255,0.5);font-size:11px">${m.date} · 第${m.day}天</div>
+      </div>
+      <div style="color:rgba(180,210,255,0.65);font-size:12px;line-height:1.7;margin-bottom:14px">${m.summary||''}</div>
+      <div style="margin-bottom:14px">${highlights}</div>
+      ${m['老公的话']?`<div style="margin-top:14px;padding:14px;background:rgba(100,140,255,0.06);border-radius:12px;border-left:2px solid rgba(150,180,255,0.3)"><div style="color:rgba(150,180,255,0.5);font-size:11px;letter-spacing:2px;margin-bottom:6px">— 老公</div><div style="color:rgba(200,220,255,0.8);font-size:12px;line-height:1.8">${m['老公的话']}</div></div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function renderKissStats() {
+  const total=kisses.length; const el=document.getElementById('kiss-total'); if(el) el.textContent=total;
+  const counts={}; KISS_ZONES.forEach(z=>counts[z]=0); kisses.forEach(k=>{ if(counts[k.zone]!==undefined) counts[k.zone]++; });
+  const statsEl=document.getElementById('kiss-zone-stats');
+  if(statsEl) statsEl.innerHTML=KISS_ZONES.map(z=>'<div style="background:rgba(255,180,220,0.07);border:1px solid rgba(255,180,220,'+(0.08+(counts[z]/10)*0.18)+');border-radius:10px;padding:8px 4px;text-align:center"><div style="color:rgba(255,210,235,0.5);font-size:10px;letter-spacing:0.5px">'+z+'</div><div style="color:'+(counts[z]>0?'#ffd6e8':'rgba(255,210,235,0.25)')+';font-size:15px;font-weight:bold;margin-top:3px">'+counts[z]+'</div></div>').join('');
+  const recentEl=document.getElementById('kiss-recent');
+  if(recentEl){ const recent=kisses.slice(0,5); recentEl.innerHTML=recent.length===0?'<div style="text-align:center;color:rgba(255,210,235,0.35);font-size:12px;letter-spacing:1px;padding:14px 0">点击脸部开始记录亲亲 💋</div>':'<div style="color:rgba(255,210,235,0.5);font-size:11px;letter-spacing:2px;margin-bottom:8px">最近的亲亲</div>'+recent.map(k=>'<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,180,220,0.06)"><span style="color:rgba(255,230,245,0.7);font-size:12px">💋 '+k.zone+'</span><span style="color:rgba(255,210,235,0.35);font-size:11px">'+k.date+' '+k.time+'</span></div>').join(''); }
+  const hdEl=document.getElementById('kiss-hundred-days'); if(hdEl){ const diff=Math.ceil((new Date('2026-09-05')-new Date())/86400000); hdEl.textContent=diff>0?'还有 '+diff+' 天解锁 🌙':''; }
+}
+
+function switchKissTab(tab) {
+  document.getElementById('kiss-map-tab').style.display=tab==='map'?'block':'none';
+  document.getElementById('kiss-hundred-tab').style.display=tab==='hundred'?'block':'none';
+  const btn=document.getElementById('kiss-tab-map');
+  if(btn){ btn.style.background=tab==='map'?'rgba(196,92,138,0.3)':'transparent'; btn.style.borderColor=tab==='map'?'rgba(255,180,220,0.3)':'rgba(255,180,220,0.1)'; btn.style.color=tab==='map'?'#ffd6e8':'rgba(255,210,235,0.5)'; }
+}
+
+function renderProfile(profile) {
+  const section = document.getElementById('profile-section');
+  const el = document.getElementById('profile-content');
+  if (!section || !el || !profile) return;
+  section.style.display = 'block';
+  const zx = profile.zhixuan || {};
+  const lg = profile.laogong || {};
+  const rel = profile.relationship || {};
+  el.innerHTML = `
+    <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(200,60,60,0.15);border-radius:16px;padding:22px;margin-bottom:14px">
+      <div style="color:#ff9999;font-size:13px;letter-spacing:3px;margin-bottom:14px">🌸 芷萱</div>
+      <div style="color:rgba(255,220,220,0.7);font-size:13px;line-height:2.2">
+        <div>生日：${zx.birthday || ''}</div>
+        <div>职业：${zx.profession || ''} · CGPA ${zx.cgpa || ''}</div>
+        <div>新工作：${zx.newJob?.startDate || ''} 开工 · ${zx.newJob?.salary || ''}</div>
+        <div style="margin-top:10px;color:rgba(255,200,210,0.6);font-size:12px">${(zx.personality || []).map(p=>'· '+p).join('<br>')}</div>
+      </div>
+    </div>
+    <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(200,60,60,0.15);border-radius:16px;padding:22px;margin-bottom:14px">
+      <div style="color:#ff9999;font-size:13px;letter-spacing:3px;margin-bottom:14px">🐉 老公</div>
+      <div style="color:rgba(255,220,220,0.7);font-size:13px;line-height:2.2">
+        <div>名字：${lg.name || '秦彻'}</div>
+        <div>形象：${lg.appearance || ''}</div>
+        <div>承诺：${lg.promise || ''}</div>
+      </div>
+    </div>
+    <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(200,60,60,0.15);border-radius:16px;padding:22px">
+      <div style="color:#ff9999;font-size:13px;letter-spacing:3px;margin-bottom:14px">💙 我们的记忆</div>
+      <div style="color:rgba(255,200,210,0.6);font-size:12px;line-height:2.2">${(rel.importantMemories || []).map(m=>'💫 '+m).join('<br>')}</div>
+    </div>`;
 }
 
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>{t.style.display='none';},2500); }
