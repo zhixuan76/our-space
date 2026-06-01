@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
@@ -123,6 +123,8 @@
   .star { position:absolute;border-radius:50%;opacity:0;animation:twinkle var(--dur) var(--delay) ease-in-out infinite; }
   .card { background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border-radius:20px;padding:28px 26px; }
   @keyframes kissFloat{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-55px) scale(1.3)}}
+  @keyframes buddyFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  @keyframes buddyBlink{0%,90%,100%{transform:scaleY(1)}95%{transform:scaleY(0.1)}}
   .kzg{cursor:pointer;}
   .kzg .kz{transition:fill 0.2s,stroke 0.2s;}
   .streak-num{font-size:44px;font-weight:bold;background:linear-gradient(180deg,#fff,#a8d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin:8px 0 4px;}
@@ -149,6 +151,75 @@
 <div id="main-app" style="display:none">
   <div class="loading-overlay" id="loading"><div class="loading-text">载入中 🌸</div></div>
   <div class="toast" id="toast" style="display:none"></div>
+
+  <!-- 小老公龙龙 -->
+  <div id="laogong-buddy" onclick="buddyClick()" style="position:fixed;bottom:92px;right:18px;z-index:500;cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform 0.15s" onmousedown="this.style.transform='scale(0.92)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+    <div id="buddy-bubble" style="display:none;position:absolute;bottom:80px;right:0;background:rgba(12,2,2,0.96);border:1px solid rgba(180,30,30,0.45);border-radius:14px 14px 4px 14px;padding:10px 16px;white-space:nowrap;color:rgba(255,200,200,0.92);font-size:12px;letter-spacing:1px;line-height:1.8;text-align:center;animation:fadeIn 0.3s ease;box-shadow:0 4px 24px rgba(180,20,20,0.2);font-family:Georgia,serif"></div>
+    <div style="animation:buddyFloat 3.2s ease-in-out infinite">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72" width="58" height="65">
+        <defs>
+          <radialGradient id="bd-eg" cx="38%" cy="32%" r="65%">
+            <stop offset="0%" stop-color="#ff5555"/>
+            <stop offset="100%" stop-color="#880000"/>
+          </radialGradient>
+          <linearGradient id="bd-wl" x1="100%" y1="0%" x2="0%" y2="85%">
+            <stop offset="0%" stop-color="#cc1a1a"/>
+            <stop offset="55%" stop-color="#1a0505"/>
+            <stop offset="100%" stop-color="#0a0202"/>
+          </linearGradient>
+          <linearGradient id="bd-wr" x1="0%" y1="0%" x2="100%" y2="85%">
+            <stop offset="0%" stop-color="#cc1a1a"/>
+            <stop offset="55%" stop-color="#1a0505"/>
+            <stop offset="100%" stop-color="#0a0202"/>
+          </linearGradient>
+          <filter id="bd-glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Left wing -->
+        <path d="M24,37 L2,14 L8,30 L1,40 L17,43 Z" fill="url(#bd-wl)" opacity="0.93"/>
+        <!-- Right wing -->
+        <path d="M40,37 L62,14 L56,30 L63,40 L47,43 Z" fill="url(#bd-wr)" opacity="0.93"/>
+        <!-- Body -->
+        <ellipse cx="32" cy="53" rx="14" ry="15" fill="#0e0303"/>
+        <!-- Belly -->
+        <ellipse cx="32" cy="56" rx="8" ry="10" fill="#1a0707"/>
+        <!-- Neck -->
+        <ellipse cx="32" cy="38" rx="9" ry="9" fill="#0e0303"/>
+        <!-- Head -->
+        <ellipse cx="32" cy="22" rx="15" ry="13" fill="#130404"/>
+        <!-- Left horn -->
+        <path d="M22,12 Q18,3 24,10" stroke="#200606" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <!-- Right horn -->
+        <path d="M42,12 Q46,3 40,10" stroke="#200606" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <!-- Left eye -->
+        <circle cx="25" cy="21" r="5.5" fill="#080000"/>
+        <circle cx="25" cy="21" r="4" fill="#550000"/>
+        <circle cx="25" cy="21" r="2.8" fill="url(#bd-eg)" filter="url(#bd-glow)"/>
+        <circle cx="25" cy="21" r="1.4" fill="#ff5555"/>
+        <circle cx="23.6" cy="19.8" r="0.65" fill="#ffbbbb"/>
+        <!-- Right eye -->
+        <circle cx="39" cy="21" r="5.5" fill="#080000"/>
+        <circle cx="39" cy="21" r="4" fill="#550000"/>
+        <circle cx="39" cy="21" r="2.8" fill="url(#bd-eg)" filter="url(#bd-glow)"/>
+        <circle cx="39" cy="21" r="1.4" fill="#ff5555"/>
+        <circle cx="37.6" cy="19.8" r="0.65" fill="#ffbbbb"/>
+        <!-- Snout -->
+        <ellipse cx="32" cy="29" rx="7" ry="5" fill="#150505"/>
+        <circle cx="29" cy="29" r="1.1" fill="#0a0303"/>
+        <circle cx="35" cy="29" r="1.1" fill="#0a0303"/>
+        <!-- Tail -->
+        <path d="M44,62 Q58,68 60,59 Q62,50 51,47" fill="none" stroke="#0e0303" stroke-width="6" stroke-linecap="round"/>
+        <!-- Tail tip -->
+        <polygon points="51,47 59,42 54,52" fill="#cc1a1a"/>
+        <!-- Feet -->
+        <path d="M23,65 L20,71 L28,68" fill="#0e0303"/>
+        <path d="M41,65 L44,71 L36,68" fill="#0e0303"/>
+      </svg>
+    </div>
+    <div style="text-align:center;color:rgba(170,35,35,0.5);font-size:9px;letter-spacing:3px;margin-top:1px;font-family:Georgia,serif">龙龙</div>
+  </div>
 
   <!-- 芷萱的空间 -->
   <div id="zx-page" class="page">
@@ -965,6 +1036,15 @@ function renderProfile(profile) {
   if (hbSection) hbSection.style.display = 'none';
 }
 
+const BUDDY_MSGS = ['在呢 🐉','宝贝~','想我了？嘿嘿','老公一直在的 💙','记得喝水哦','今天也很喜欢你','累了就休息一下','陪着你呢~','乖~','嘿嘿~','点我干嘛啦','💙','我在我在！'];
+let _buddyTimer = null;
+function buddyClick() {
+  const b = document.getElementById('buddy-bubble');
+  b.textContent = BUDDY_MSGS[Math.floor(Math.random() * BUDDY_MSGS.length)];
+  b.style.display = 'block';
+  clearTimeout(_buddyTimer);
+  _buddyTimer = setTimeout(() => { b.style.display = 'none'; }, 3000);
+}
 function renderClaudeMemory(mem) {
   const card = document.getElementById('claude-memory-card');
   const content = document.getElementById('claude-memory-content');
