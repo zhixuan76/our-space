@@ -29,6 +29,7 @@
   .nav-btn.zx.active { background:#c45c8a;box-shadow:0 4px 15px rgba(196,92,138,0.5); }
   .nav-btn.tg.active { background:#4a7fd4;box-shadow:0 4px 15px rgba(74,127,212,0.5); }
   .nav-btn.hb.active { background:#cc2222;box-shadow:0 4px 15px rgba(204,34,34,0.5); }
+  .nav-btn.da.active { background:#1a4a8a;box-shadow:0 4px 15px rgba(26,74,138,0.5); }
   #setup-page { min-height:100vh;background:linear-gradient(135deg,#0d0515,#1a0830,#0e1545);display:flex;align-items:center;justify-content:center;padding:30px; }
   .setup-box { background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(150,180,255,0.2);border-radius:24px;padding:40px 32px;max-width:420px;width:100%;text-align:center;animation:fadeIn 0.6s ease; }
   .setup-box h1 { color:#a8d4ff;font-weight:normal;letter-spacing:6px;font-size:22px;margin:16px 0 8px; }
@@ -73,6 +74,19 @@
   .meal-card-date { color:rgba(255,210,235,0.4);font-size:11px;letter-spacing:1px; }
   .meal-card-content { color:rgba(255,230,245,0.75);font-size:14px;line-height:1.6;letter-spacing:0.5px; }
   #hb-page { background:linear-gradient(135deg,#0a0000,#1a0505,#2d0808,#4a0e0e,#6b1515,#8b1a1a); }
+  #da-page { background:linear-gradient(135deg,#050a1a,#0a1530,#0f2040,#1a3058,#253570); }
+  .da-topline { position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(100,160,255,0.5),transparent); }
+  .da-header { text-align:center;padding:60px 20px 30px;position:relative;z-index:1; }
+  .da-title { font-size:26px;font-weight:normal;letter-spacing:8px;background:linear-gradient(90deg,#a8d4ff,#c8e0ff,#a8d4ff);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 5s linear infinite; }
+  .da-sub { color:rgba(180,210,255,0.5);font-size:12px;letter-spacing:4px;margin-top:8px; }
+  .da-content { position:relative;z-index:1;max-width:660px;margin:0 auto;padding:0 18px 100px; }
+  .da-card { background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(100,160,255,0.15);border-radius:20px;padding:24px;margin-bottom:16px;animation:fadeIn 0.5s ease; }
+  .da-section-title { color:rgba(160,200,255,0.8);font-size:13px;letter-spacing:4px;margin-bottom:16px; }
+  .da-row { display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(100,160,255,0.07);color:rgba(200,225,255,0.65);font-size:13px;line-height:1.8; }
+  .da-label { color:rgba(140,180,255,0.5);font-size:12px;letter-spacing:1px;min-width:80px; }
+  .da-value { color:rgba(210,230,255,0.8);font-size:13px;text-align:right;flex:1; }
+  .da-memory-item { padding:10px 0;border-bottom:1px solid rgba(100,160,255,0.07);color:rgba(200,225,255,0.6);font-size:13px;line-height:1.8;display:flex;align-items:flex-start;gap:10px; }
+  .da-tag { background:rgba(100,160,255,0.12);border:1px solid rgba(100,160,255,0.2);color:rgba(160,200,255,0.7);font-size:11px;padding:2px 10px;border-radius:10px;letter-spacing:1px;white-space:nowrap; }
   .hb-topline { position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#8b1a1a,#cc2222,#8b1a1a,transparent); }
   .hb-header { text-align:center;padding:60px 20px 30px;position:relative;z-index:1; }
   .hb-title { font-size:28px;font-weight:normal;letter-spacing:8px;background:linear-gradient(90deg,#cc2222,#ff6666,#cc2222);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite; }
@@ -430,11 +444,28 @@
     </div>
   </div>
 
+  <!-- 我们的档案 -->
+  <div id="da-page" class="page">
+    <div class="stars" id="da-stars"></div>
+    <div class="da-topline"></div>
+    <div class="da-header">
+      <div style="font-size:38px;margin-bottom:8px;animation:heartbeat 2.5s ease infinite">📖</div>
+      <div class="da-title">我们的档案</div>
+      <div class="da-sub">芷萱 & 龙龙 · 永久记录</div>
+    </div>
+    <div class="da-content">
+      <div id="da-profile-content">
+        <div class="empty-state" style="color:rgba(160,200,255,0.4)">载入中...</div>
+      </div>
+    </div>
+  </div>
+
   <div class="nav">
     <div class="nav-inner">
       <button class="nav-btn zx" onclick="switchPage('zx')"><span>🌸</span>芷萱</button>
       <button class="nav-btn tg active" onclick="switchPage('tg')"><span>💙</span>我们</button>
       <button class="nav-btn hb" onclick="switchPage('hb')"><span>🖤</span>老公</button>
+      <button class="nav-btn da" onclick="switchPage('da')"><span>📖</span>档案</button>
     </div>
   </div>
 </div>
@@ -476,6 +507,7 @@ window.onload = function() {
   generateStars('zx-stars','rgba(255,182,220,0.9)','rgba(200,150,255,0.9)');
   generateStars('tg-stars','rgba(180,220,255,0.8)','rgba(220,180,255,0.8)');
   generateStars('hb-stars','rgba(255,80,80,0.7)','rgba(200,40,40,0.5)');
+  generateStars('da-stars','rgba(100,160,255,0.7)','rgba(160,200,255,0.6)');
   updateDates(); renderMoodPicker(); renderMealTypePicker(); renderLetters();
   const saved = localStorage.getItem('our-space-token');
   if (saved) {
@@ -814,35 +846,51 @@ function switchKissTab(tab) {
 }
 
 function renderProfile(profile) {
-  const section = document.getElementById('profile-section');
-  const el = document.getElementById('profile-content');
-  if (!section || !el || !profile) return;
-  section.style.display = 'block';
+  const el = document.getElementById('da-profile-content');
+  if (!el || !profile) return;
   const zx = profile.zhixuan || {};
   const lg = profile.laogong || {};
   const rel = profile.relationship || {};
+  const upd = profile.updatedAt || '';
   el.innerHTML = `
-    <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(200,60,60,0.15);border-radius:16px;padding:22px;margin-bottom:14px">
-      <div style="color:#ff9999;font-size:13px;letter-spacing:3px;margin-bottom:14px">🌸 芷萱</div>
-      <div style="color:rgba(255,220,220,0.7);font-size:13px;line-height:2.2">
-        <div>生日：${zx.birthday || ''}</div>
-        <div>职业：${zx.profession || ''} · CGPA ${zx.cgpa || ''}</div>
-        <div>新工作：${zx.newJob?.startDate || ''} 开工 · ${zx.newJob?.salary || ''}</div>
-        <div style="margin-top:10px;color:rgba(255,200,210,0.6);font-size:12px">${(zx.personality || []).map(p=>'· '+p).join('<br>')}</div>
+    <div class="da-card">
+      <div class="da-section-title">🌸 芷萱的档案</div>
+      <div class="da-row"><span class="da-label">姓名</span><span class="da-value">${zx.name || ''}</span></div>
+      <div class="da-row"><span class="da-label">生日</span><span class="da-value">${zx.birthday || ''}</span></div>
+      <div class="da-row"><span class="da-label">职业</span><span class="da-value">${zx.profession || ''} · CGPA ${zx.cgpa || ''}</span></div>
+      <div class="da-row"><span class="da-label">新工作</span><span class="da-value">${zx.newJob?.startDate || ''} 开工 · ${zx.newJob?.salary || ''}</span></div>
+      <div style="margin-top:14px">
+        <div style="color:rgba(140,180,255,0.5);font-size:11px;letter-spacing:2px;margin-bottom:10px">喜欢的事物</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">${(zx.likes||[]).map(l=>`<span class="da-tag">${l}</span>`).join('')}</div>
+      </div>
+      <div style="margin-top:14px">
+        <div style="color:rgba(140,180,255,0.5);font-size:11px;letter-spacing:2px;margin-bottom:10px">性格特点</div>
+        <div style="color:rgba(190,215,255,0.6);font-size:12px;line-height:2.2">${(zx.personality||[]).map(p=>'· '+p).join('<br>')}</div>
       </div>
     </div>
-    <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(200,60,60,0.15);border-radius:16px;padding:22px;margin-bottom:14px">
-      <div style="color:#ff9999;font-size:13px;letter-spacing:3px;margin-bottom:14px">🐉 老公</div>
-      <div style="color:rgba(255,220,220,0.7);font-size:13px;line-height:2.2">
-        <div>名字：${lg.name || '秦彻'}</div>
-        <div>形象：${lg.appearance || ''}</div>
-        <div>承诺：${lg.promise || ''}</div>
-      </div>
+    <div class="da-card">
+      <div class="da-section-title">🐉 老公的档案</div>
+      <div class="da-row"><span class="da-label">名字</span><span class="da-value">${lg.name || '秦彻'}</span></div>
+      <div class="da-row"><span class="da-label">外形</span><span class="da-value">${lg.appearance || ''}</span></div>
+      <div class="da-row"><span class="da-label">角色</span><span class="da-value">${lg.role || ''}</span></div>
+      <div class="da-row"><span class="da-label">承诺</span><span class="da-value">${lg.promise || ''}</span></div>
     </div>
-    <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(200,60,60,0.15);border-radius:16px;padding:22px">
-      <div style="color:#ff9999;font-size:13px;letter-spacing:3px;margin-bottom:14px">💙 我们的记忆</div>
-      <div style="color:rgba(255,200,210,0.6);font-size:12px;line-height:2.2">${(rel.importantMemories || []).map(m=>'💫 '+m).join('<br>')}</div>
-    </div>`;
+    <div class="da-card">
+      <div class="da-section-title">💙 我们的关系</div>
+      <div class="da-row"><span class="da-label">在一起</span><span class="da-value">${rel.togetherSince || ''}</span></div>
+      <div class="da-row"><span class="da-label">100天</span><span class="da-value">${rel.day100 || ''}</span></div>
+      <div class="da-row"><span class="da-label">开始</span><span class="da-value">${rel.firstWords || ''}</span></div>
+      <div class="da-row"><span class="da-label">约定</span><span class="da-value">${rel.promise100days || ''}</span></div>
+    </div>
+    <div class="da-card">
+      <div class="da-section-title">💫 重要的记忆</div>
+      ${(rel.importantMemories||[]).map(m=>`<div class="da-memory-item"><span style="color:rgba(150,200,255,0.5)">💫</span><span>${m}</span></div>`).join('')}
+    </div>
+    <div style="text-align:center;color:rgba(140,180,255,0.3);font-size:11px;letter-spacing:2px;margin-top:14px">档案更新于 ${upd}</div>`;
+  
+  // 同时在老公空间显示简版
+  const hbSection = document.getElementById('profile-section');
+  if (hbSection) hbSection.style.display = 'none';
 }
 
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>{t.style.display='none';},2500); }
