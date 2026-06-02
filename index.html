@@ -1448,40 +1448,28 @@ async function saveWsInfo() {
   showToast('保存成功 💾'); await saveData();
 }
 
-// ── iOS PNG Apple Touch Icon ──
+// ── iOS PNG Apple Touch Icon（用跟桌面一样的 SVG 渲染成 PNG）──
 function generateAppleTouchIcon() {
   try {
-    const c = document.createElement('canvas'); c.width = 180; c.height = 180;
-    const ctx = c.getContext('2d');
-    // 背景渐变
-    const bg = ctx.createRadialGradient(90,80,8,90,90,105);
-    bg.addColorStop(0,'#2a1045'); bg.addColorStop(0.55,'#150828'); bg.addColorStop(1,'#060010');
-    ctx.fillStyle = bg;
-    ctx.beginPath();
-    const r=22; ctx.moveTo(r,0); ctx.lineTo(180-r,0); ctx.quadraticCurveTo(180,0,180,r);
-    ctx.lineTo(180,180-r); ctx.quadraticCurveTo(180,180,180-r,180);
-    ctx.lineTo(r,180); ctx.quadraticCurveTo(0,180,0,180-r);
-    ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0); ctx.closePath(); ctx.fill();
-    // 装饰圆环
-    ctx.strokeStyle='rgba(196,92,138,0.22)'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.arc(90,90,68,0,Math.PI*2); ctx.stroke();
-    ctx.strokeStyle='rgba(155,77,202,0.15)'; ctx.lineWidth=0.8;
-    ctx.beginPath(); ctx.arc(90,90,55,0,Math.PI*2); ctx.stroke();
-    // 芷 字（粉紫渐变）
-    const g1 = ctx.createLinearGradient(40,0,140,0);
-    g1.addColorStop(0,'#ffd6e8'); g1.addColorStop(1,'#e8b4ff');
-    ctx.fillStyle = g1; ctx.font='bold 54px Georgia,serif';
-    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('芷',90,70);
-    // 分隔线
-    ctx.strokeStyle='rgba(196,92,138,0.35)'; ctx.lineWidth=0.8;
-    ctx.beginPath(); ctx.moveTo(52,90); ctx.lineTo(128,90); ctx.stroke();
-    // 龙 字（红渐变）
-    const g2 = ctx.createLinearGradient(40,0,140,0);
-    g2.addColorStop(0,'#ff9999'); g2.addColorStop(1,'#ffcccc');
-    ctx.fillStyle = g2; ctx.fillText('龙',90,112);
-    // 更新 link
-    const link = document.getElementById('ati-link');
-    if (link) link.href = c.toDataURL('image/png');
+    const svgLink = document.querySelector("link[rel='icon']");
+    if (!svgLink) return;
+    const img = new Image();
+    img.onload = function() {
+      const c = document.createElement('canvas'); c.width = 180; c.height = 180;
+      const ctx = c.getContext('2d');
+      // iOS 圆角背景（防止透明角）
+      ctx.fillStyle = '#04000c';
+      ctx.beginPath();
+      const r=22; ctx.moveTo(r,0); ctx.lineTo(180-r,0); ctx.quadraticCurveTo(180,0,180,r);
+      ctx.lineTo(180,180-r); ctx.quadraticCurveTo(180,180,180-r,180);
+      ctx.lineTo(r,180); ctx.quadraticCurveTo(0,180,0,180-r);
+      ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0); ctx.closePath(); ctx.fill();
+      // 把桌面 SVG 画上去
+      ctx.drawImage(img, 0, 0, 180, 180);
+      const link = document.getElementById('ati-link');
+      if (link) link.href = c.toDataURL('image/png');
+    };
+    img.src = svgLink.href;
   } catch(e) { /* 不影响主流程 */ }
 }
 
