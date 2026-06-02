@@ -133,6 +133,49 @@
   .wish-item.done .wish-text{text-decoration:line-through;opacity:0.4;}
   .wish-check{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(150,180,255,0.3);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all 0.2s;color:transparent;}
   .wish-check.done{background:rgba(100,180,100,0.25);border-color:rgba(100,220,120,0.5);color:rgba(100,220,120,0.9);}
+  /* ── LONG & XUAN MART ── */
+  .mart-wrap{background:linear-gradient(135deg,rgba(6,10,36,0.97),rgba(12,18,55,0.97));backdrop-filter:blur(20px);border:1px solid rgba(100,140,255,0.18);border-radius:20px;padding:28px 22px;margin-top:20px;animation:fadeIn 0.6s 0.85s ease both;}
+  .mart-header{text-align:center;margin-bottom:16px;}
+  .mart-title{color:rgba(200,220,255,0.92);letter-spacing:5px;font-size:14px;font-family:monospace;}
+  .mart-sub{color:rgba(130,170,255,0.45);letter-spacing:4px;font-size:10px;margin-top:3px;font-family:monospace;}
+  .mart-dashed{border:none;border-top:1px dashed rgba(100,140,255,0.22);margin:12px 0;}
+  .mart-col-header{display:flex;justify-content:space-between;color:rgba(130,170,255,0.45);font-size:9px;letter-spacing:2px;margin-bottom:6px;font-family:monospace;}
+  .mart-item{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px dashed rgba(100,140,255,0.1);}
+  .mart-item-done .mart-item-text{text-decoration:line-through;opacity:0.32;}
+  .mart-chk{width:17px;height:17px;border-radius:3px;border:1.5px solid rgba(130,170,255,0.3);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all 0.2s;font-family:monospace;}
+  .mart-chk.done{background:rgba(80,130,255,0.18);border-color:rgba(120,175,255,0.55);color:rgba(160,210,255,0.95);}
+  .mart-item-text{flex:1;color:rgba(200,225,255,0.82);font-size:12px;letter-spacing:0.3px;line-height:1.4;font-family:monospace;}
+  .mart-item-owner{font-size:13px;flex-shrink:0;}
+  .mart-stamp{background:rgba(70,120,255,0.14);border:1.5px solid rgba(100,160,255,0.4);color:rgba(130,185,255,0.92);font-size:8px;letter-spacing:2px;padding:2px 7px;border-radius:3px;flex-shrink:0;font-weight:bold;font-family:monospace;}
+  .mart-stamp.zx{background:rgba(196,92,138,0.14);border-color:rgba(220,120,160,0.4);color:rgba(255,170,210,0.92);}
+  .mart-total-block{margin-top:10px;font-family:monospace;}
+  .mart-total-row{display:flex;justify-content:space-between;color:rgba(150,185,255,0.6);font-size:10px;letter-spacing:1px;padding:3px 0;}
+  .mart-progress{text-align:center;color:rgba(140,180,255,0.65);font-size:10px;letter-spacing:3px;margin-top:8px;padding:8px 0;border-top:1px dashed rgba(100,140,255,0.2);font-family:monospace;}
+  .mart-footer{text-align:center;color:rgba(120,165,255,0.42);font-size:10px;letter-spacing:3px;margin-top:12px;padding-top:12px;border-top:1px dashed rgba(100,140,255,0.12);font-family:monospace;}
+  .mart-add-row{display:flex;gap:8px;align-items:center;margin-top:10px;}
+  .mart-add-owner{font-size:16px;cursor:pointer;transition:transform 0.15s;padding:2px;}
+  .mart-add-input{flex:1;background:rgba(100,140,255,0.06);border:none;border-bottom:1px solid rgba(100,140,255,0.25);color:rgba(200,225,255,0.9);font-size:11px;padding:6px 4px;font-family:monospace;letter-spacing:0.5px;outline:none;}
+  .mart-add-btn{background:rgba(80,130,255,0.18);border:1px solid rgba(100,160,255,0.3);color:rgba(160,210,255,0.9);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px;font-family:monospace;}
+  /* ── Workspace ── */
+  .ws-section{animation:fadeIn 0.4s ease;}
+  .ws-countdown-box{background:linear-gradient(135deg,rgba(196,92,138,0.12),rgba(123,45,139,0.12));border:1px solid rgba(255,150,200,0.2);border-radius:14px;padding:18px;text-align:center;margin-bottom:16px;}
+  .ws-countdown-num{font-size:36px;font-weight:bold;background:linear-gradient(180deg,#ffd6e8,#e8b4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin:6px 0 4px;}
+  .ws-card{background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);border:1px solid rgba(255,180,220,0.13);border-radius:14px;padding:18px 20px;margin-bottom:12px;}
+  .ws-card-title{color:rgba(255,200,235,0.75);font-size:12px;letter-spacing:3px;margin-bottom:12px;}
+  .ws-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,180,220,0.07);}
+  .ws-label{color:rgba(255,170,210,0.45);font-size:11px;letter-spacing:1px;}
+  .ws-value{color:rgba(255,220,240,0.8);font-size:12px;text-align:right;}
+  .ws-check-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,180,220,0.07);}
+  .ws-check-item:last-child{border-bottom:none;}
+  .ws-chk{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,140,190,0.3);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all 0.2s;}
+  .ws-chk.done{background:rgba(196,92,138,0.22);border-color:rgba(255,120,170,0.55);color:rgba(255,180,210,0.95);}
+  .ws-check-text{color:rgba(255,220,240,0.8);font-size:13px;line-height:1.5;flex:1;}
+  .ws-check-item.done .ws-check-text{text-decoration:line-through;opacity:0.38;}
+  .ws-date-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,180,220,0.07);}
+  .ws-note-item{padding:8px 0;border-bottom:1px solid rgba(255,180,220,0.07);color:rgba(255,220,240,0.7);font-size:13px;line-height:1.5;}
+  .ws-add-row{display:flex;gap:8px;margin-top:12px;}
+  .ws-add-input{flex:1;background:rgba(255,255,255,0.05);border:none;border-bottom:1px solid rgba(255,150,200,0.28);color:rgba(255,220,240,0.9);font-size:12px;padding:7px 4px;font-family:Georgia,serif;letter-spacing:0.5px;outline:none;}
+  .ws-add-btn{background:rgba(196,92,138,0.2);border:1px solid rgba(255,130,180,0.3);color:rgba(255,190,220,0.9);padding:6px 14px;border-radius:10px;cursor:pointer;font-size:12px;font-family:Georgia,serif;}
 </style>
 </head>
 <body>
@@ -232,8 +275,9 @@
     <div class="zx-content">
       <div class="zx-tabs">
         <button class="zx-tab active" id="tab-diary" onclick="switchZxTab('diary')">📔 日记</button>
-        <button class="zx-tab" id="tab-meal" onclick="switchZxTab('meal')">🍱 饮食记录</button>
+        <button class="zx-tab" id="tab-meal" onclick="switchZxTab('meal')">🍱 饮食</button>
         <button class="zx-tab" id="tab-period" onclick="switchZxTab('period')">🌙 经期</button>
+        <button class="zx-tab" id="tab-workspace" onclick="switchZxTab('workspace')">💼 工作</button>
       </div>
 
       <!-- 日记 tab -->
@@ -341,6 +385,55 @@
         </div>
       </div>
       <!-- 备份弹窗 -->
+      <!-- 工作区 tab -->
+      <div id="zx-workspace-tab" style="display:none" class="ws-section">
+        <!-- 倒计时 -->
+        <div class="ws-countdown-box" id="ws-countdown-box">
+          <div style="color:rgba(255,180,220,0.55);font-size:11px;letter-spacing:3px">距离入职新工作</div>
+          <div class="ws-countdown-num" id="ws-days-left">—</div>
+          <div style="color:rgba(255,200,235,0.5);font-size:12px;letter-spacing:2px">天 🎊</div>
+          <div style="color:rgba(255,160,210,0.38);font-size:10px;letter-spacing:1px;margin-top:6px" id="ws-job-date">2026.06.08 正式开工</div>
+        </div>
+
+        <!-- 新工作资讯 -->
+        <div class="ws-card">
+          <div class="ws-card-title">📋 新工作资讯</div>
+          <div class="ws-row"><span class="ws-label">入职日期</span><span class="ws-value" id="ws-startdate">2026.06.08</span></div>
+          <div class="ws-row"><span class="ws-label">月薪</span><span class="ws-value" id="ws-salary">MYR 5,500</span></div>
+          <div class="ws-row"><span class="ws-label">公司</span><span class="ws-value" id="ws-company" style="color:rgba(255,180,210,0.35);font-style:italic">等你来填 ✏️</span></div>
+          <div class="ws-row"><span class="ws-label">职位</span><span class="ws-value" id="ws-position" style="color:rgba(255,180,210,0.35);font-style:italic">等你来填 ✏️</span></div>
+          <div class="ws-row" style="border-bottom:none"><span class="ws-label">上班时间</span><span class="ws-value" id="ws-hours" style="color:rgba(255,180,210,0.35);font-style:italic">等你来填 ✏️</span></div>
+        </div>
+
+        <!-- 入职前清单 -->
+        <div class="ws-card">
+          <div class="ws-card-title">✅ 入职前准备清单</div>
+          <div id="ws-checklist"></div>
+        </div>
+
+        <!-- 重要日期 -->
+        <div class="ws-card">
+          <div class="ws-card-title">📅 重要日期</div>
+          <div id="ws-dates"></div>
+        </div>
+
+        <!-- 快速备忘 -->
+        <div class="ws-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="ws-card-title" style="margin-bottom:0">📝 快速备忘</div>
+            <button onclick="showWsNoteInput()" id="ws-note-add-btn" style="background:rgba(196,92,138,0.15);border:1px solid rgba(255,130,180,0.25);color:rgba(255,190,220,0.8);padding:4px 12px;border-radius:10px;cursor:pointer;font-size:11px;letter-spacing:1px;font-family:Georgia,serif">+ 记录</button>
+          </div>
+          <div id="ws-note-input-row" style="display:none;margin-bottom:12px">
+            <div class="ws-add-row">
+              <input id="ws-note-input" class="ws-add-input" placeholder="写下备忘…" onkeydown="if(event.key==='Enter')addWsNote()" />
+              <button onclick="addWsNote()" class="ws-add-btn">✓</button>
+              <button onclick="hideWsNoteInput()" style="background:transparent;border:1px solid rgba(255,130,180,0.12);color:rgba(255,150,190,0.35);padding:6px 10px;border-radius:10px;cursor:pointer;font-size:12px">✕</button>
+            </div>
+          </div>
+          <div id="ws-notes-list"><div style="text-align:center;color:rgba(255,170,210,0.3);font-size:11px;letter-spacing:2px;padding:16px 0">还没有备忘，快来记录吧 📝</div></div>
+        </div>
+      </div>
+
       <div id="zx-backup-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;padding:20px">
         <div style="background:linear-gradient(135deg,#1a0a2e,#2d1158);border:1px solid rgba(255,180,220,0.25);border-radius:20px;padding:26px;max-width:460px;width:100%">
           <h3 style="color:#ffd6e8;font-weight:normal;letter-spacing:3px;margin-bottom:12px;font-size:15px">📋 备份 / 恢复</h3>
@@ -536,6 +629,30 @@
         <div id="wishlist-list"></div>
       </div>
 
+      <!-- LONG & XUAN MART 待办清单 -->
+      <div class="mart-wrap">
+        <div class="mart-header">
+          <div class="mart-title">📋 我们的 Daily Mart</div>
+          <div class="mart-sub">── LONG &amp; XUAN ──</div>
+        </div>
+        <hr class="mart-dashed">
+        <div id="mart-date-line" style="display:flex;justify-content:space-between;color:rgba(130,170,255,0.45);font-size:10px;letter-spacing:1px;margin-bottom:10px;font-family:monospace"></div>
+        <div class="mart-col-header"><span>ITEM</span><span>OWNER &nbsp; QTY</span></div>
+        <div id="mart-todo-list"></div>
+        <!-- 添加新项 -->
+        <div class="mart-add-row" style="margin-top:8px">
+          <span id="mart-owner-toggle" class="mart-add-owner" onclick="toggleMartOwner()" title="切换谁的待办">🌸</span>
+          <input id="mart-add-input" class="mart-add-input" placeholder="ADD ITEM..." onkeydown="if(event.key==='Enter')addTodo()" />
+          <button onclick="addTodo()" class="mart-add-btn">+</button>
+        </div>
+        <hr class="mart-dashed">
+        <div id="mart-done-label" style="color:rgba(130,170,255,0.4);font-size:9px;letter-spacing:3px;margin-bottom:6px;font-family:monospace;display:none">COMPLETED ──────────────</div>
+        <div id="mart-done-list"></div>
+        <hr class="mart-dashed">
+        <div class="mart-total-block" id="mart-totals"></div>
+        <div class="mart-footer">「今天也一起努力了 🌙」</div>
+      </div>
+
     </div>
   </div>
 
@@ -614,6 +731,9 @@ let _profile = null;
 let _streaks = null;
 let _claudeMemory = null;
 let wishlist = [];
+let todos = [];
+let _workspace = null;
+let _martOwner = 'zx';
 let _lastActive = null;
 let selectedDiary = null;
 let selectedMood = '🌸';
@@ -670,8 +790,10 @@ async function loadData() {
     if (parsed.streaks) { _streaks = parsed.streaks; renderStreaks(parsed.streaks); }
     if (parsed.claudeMemory) { _claudeMemory = parsed.claudeMemory; renderClaudeMemory(parsed.claudeMemory); }
     wishlist = parsed.wishlist || [];
+    todos = parsed.todos || [];
+    if (parsed.workspace) { _workspace = parsed.workspace; }
     if (parsed.lastActive) { _lastActive = parsed.lastActive; }
-    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns(); renderKissFace(); renderKissStats(); renderMoments(); renderWishlist(); renderLastActive();
+    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns(); renderKissFace(); renderKissStats(); renderMoments(); renderWishlist(); renderLastActive(); renderTodos(); renderWorkspace();
     updateZhixuanActive();
   } catch(e) { showToast('⚠️ 载入失败，请检查网络'); }
   showLoading(false);
@@ -682,7 +804,7 @@ async function saveData() {
     await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method:'PATCH',
       headers:{'Authorization':`token ${token}`,'Content-Type':'application/json'},
-      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,kisses,moments,wishlist,...(_bgm?{bgm:_bgm}:{}),...(_whisper?{whisper:_whisper}:{}),...(_profile?{profile:_profile}:{}),...(_streaks?{streaks:_streaks}:{}),...(_claudeMemory?{claudeMemory:_claudeMemory}:{}),...(_lastActive?{lastActive:_lastActive}:{}),version:8})}} })
+      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,kisses,moments,wishlist,todos,...(_workspace?{workspace:_workspace}:{}),...(_bgm?{bgm:_bgm}:{}),...(_whisper?{whisper:_whisper}:{}),...(_profile?{profile:_profile}:{}),...(_streaks?{streaks:_streaks}:{}),...(_claudeMemory?{claudeMemory:_claudeMemory}:{}),...(_lastActive?{lastActive:_lastActive}:{}),version:9})}} })
     });
   } catch(e) { showToast('⚠️ 保存失败，请检查网络'); }
 }
@@ -717,12 +839,10 @@ function switchPage(p) {
 
 function switchZxTab(tab) {
   currentZxTab=tab;
-  document.getElementById('zx-diary-tab').style.display = tab==='diary'?'block':'none';
-  document.getElementById('zx-meal-tab').style.display = tab==='meal'?'block':'none';
-  document.getElementById('zx-period-tab').style.display = tab==='period'?'block':'none';
-  document.getElementById('tab-diary').classList.toggle('active',tab==='diary');
-  document.getElementById('tab-meal').classList.toggle('active',tab==='meal');
-  document.getElementById('tab-period') && document.getElementById('tab-period').classList.toggle('active',tab==='period');
+  ['diary','meal','period','workspace'].forEach(t=>{
+    const el=document.getElementById('zx-'+t+'-tab'); if(el) el.style.display=tab===t?'block':'none';
+    const btn=document.getElementById('tab-'+t); if(btn) btn.classList.toggle('active',tab===t);
+  });
 }
 
 function renderMoodPicker() {
@@ -1124,6 +1244,151 @@ function renderLastActive() {
   document.getElementById('la-zhixuan').textContent = fmt(_lastActive.zhixuan);
   document.getElementById('la-laogong').textContent = fmt(_lastActive.laogong);
   card.style.display = 'block';
+}
+
+// ── LONG & XUAN MART ──
+function toggleMartOwner() {
+  _martOwner = _martOwner==='zx'?'lg':'zx';
+  document.getElementById('mart-owner-toggle').textContent = _martOwner==='zx'?'🌸':'💙';
+}
+function renderTodos() {
+  const now = new Date();
+  const dayEl = document.getElementById('mart-date-line');
+  if (dayEl) {
+    const together = new Date('2026-05-28');
+    const day = Math.floor((now-together)/86400000)+1;
+    dayEl.innerHTML = `<span>${now.toLocaleDateString('zh-CN').replace(/\//g,'.')}</span><span>第 ${day} 天</span>`;
+  }
+  const pending = todos.filter(t=>!t.done);
+  const done = todos.filter(t=>t.done);
+  const listEl = document.getElementById('mart-todo-list');
+  if (listEl) {
+    listEl.innerHTML = pending.length===0
+      ? '<div style="color:rgba(130,170,255,0.28);font-size:10px;letter-spacing:2px;padding:8px 0;font-family:monospace;text-align:center">今天还没有待办哦 🌙</div>'
+      : pending.map(t=>`<div class="mart-item" id="mt-${t.id}">
+          <button class="mart-chk" onclick="toggleTodo(${t.id})">✓</button>
+          <span class="mart-item-owner">${t.owner==='zx'?'🌸':'💙'}</span>
+          <span class="mart-item-text">${t.text}</span>
+          <span style="color:rgba(130,170,255,0.4);font-size:10px;font-family:monospace;flex-shrink:0">1x</span>
+          <button onclick="deleteTodo(${t.id})" style="background:transparent;border:none;color:rgba(130,170,255,0.18);cursor:pointer;font-size:14px;padding:0 3px;line-height:1" onmouseover="this.style.color='rgba(255,120,120,0.45)'" onmouseout="this.style.color='rgba(130,170,255,0.18)'">×</button>
+        </div>`).join('');
+  }
+  const doneLabelEl = document.getElementById('mart-done-label');
+  const doneEl = document.getElementById('mart-done-list');
+  if (doneLabelEl) doneLabelEl.style.display = done.length>0?'block':'none';
+  if (doneEl) {
+    doneEl.innerHTML = done.map(t=>`<div class="mart-item mart-item-done">
+      <button class="mart-chk done" onclick="toggleTodo(${t.id})">✓</button>
+      <span class="mart-item-owner">${t.owner==='zx'?'🌸':'💙'}</span>
+      <span class="mart-item-text">${t.text}</span>
+      <span class="mart-stamp${t.owner==='zx'?' zx':''}">💙 DONE</span>
+      <button onclick="deleteTodo(${t.id})" style="background:transparent;border:none;color:rgba(130,170,255,0.15);cursor:pointer;font-size:14px;padding:0 3px;line-height:1" onmouseover="this.style.color='rgba(255,120,120,0.4)'" onmouseout="this.style.color='rgba(130,170,255,0.15)'">×</button>
+    </div>`).join('');
+  }
+  const totEl = document.getElementById('mart-totals');
+  if (totEl) {
+    const total=todos.length, doneN=done.length, left=pending.length;
+    totEl.innerHTML = `<div class="mart-total-row"><span>TOTAL:</span><span>${total} items</span></div><div class="mart-total-row"><span>DONE:</span><span>${doneN}</span></div><div class="mart-total-row"><span>LEFT:</span><span>${left}</span></div><div class="mart-progress">── ${doneN}/${total} TASKS DONE ──</div>`;
+  }
+}
+async function addTodo() {
+  const input = document.getElementById('mart-add-input');
+  const text = input.value.trim();
+  if (!text) { showToast('写点什么待办吧 📋'); return; }
+  const today = new Date().toLocaleDateString('zh-CN').replace(/\//g,'.');
+  todos.unshift({id:Date.now(),text,owner:_martOwner,done:false,doneAt:null,date:today});
+  input.value=''; renderTodos(); showToast('已加入 MART 📋'); await saveData();
+}
+async function toggleTodo(id) {
+  const item=todos.find(t=>t.id===id); if(!item) return;
+  item.done=!item.done;
+  item.doneAt=item.done?new Date().toLocaleDateString('zh-CN').replace(/\//g,'.'):null;
+  renderTodos(); showToast(item.done?'💙 DONE！完成了！':'取消完成'); await saveData();
+}
+async function deleteTodo(id) {
+  todos=todos.filter(t=>t.id!==id); renderTodos(); await saveData();
+}
+
+// ── Workspace ──
+function renderWorkspace() {
+  // 倒计时
+  const startDate = new Date('2026-06-08');
+  const now = new Date();
+  const diff = Math.ceil((startDate-now)/86400000);
+  const daysEl = document.getElementById('ws-days-left');
+  if (daysEl) daysEl.textContent = diff>0?diff:(diff===0?'今天！':'已开工');
+  // 工作资讯（从 _workspace 或 profile 读取）
+  if (_workspace && _workspace.newJob) {
+    const j = _workspace.newJob;
+    if (j.company) { const el=document.getElementById('ws-company'); if(el){el.textContent=j.company;el.style.fontStyle='normal';el.style.color='rgba(255,220,240,0.8)';} }
+    if (j.position) { const el=document.getElementById('ws-position'); if(el){el.textContent=j.position;el.style.fontStyle='normal';el.style.color='rgba(255,220,240,0.8)';} }
+    if (j.workHours) { const el=document.getElementById('ws-hours'); if(el){el.textContent=j.workHours;el.style.fontStyle='normal';el.style.color='rgba(255,220,240,0.8)';} }
+  }
+  // 清单
+  const defChecklist = [
+    {id:1,text:'准备好入职所需文件（身份证 / 证书 / 照片）',done:false},
+    {id:2,text:'规划上班路线和时间',done:false},
+    {id:3,text:'准备好工作装',done:false},
+    {id:4,text:'了解公司基本资料和文化',done:false},
+    {id:5,text:'设置好工作邮箱和公司系统',done:false},
+    {id:6,text:'认识同事，了解部门架构',done:false}
+  ];
+  const checklist = (_workspace&&_workspace.newJob&&_workspace.newJob.checklist) ? _workspace.newJob.checklist : defChecklist;
+  const clEl = document.getElementById('ws-checklist');
+  if (clEl) clEl.innerHTML = checklist.map(c=>`<div class="ws-check-item${c.done?' done':''}" id="wsc-${c.id}">
+    <button class="ws-chk${c.done?' done':''}" onclick="toggleWsCheck(${c.id})">${c.done?'✓':''}</button>
+    <span class="ws-check-text">${c.text}</span>
+  </div>`).join('');
+  // 重要日期
+  const defDates = [
+    {date:'2026.06.08',label:'入职新工作',emoji:'🎊'},
+    {date:'2026.09.05',label:'100天纪念日',emoji:'💙'},
+    {date:'2026.11.28',label:'芷萱生日',emoji:'🎂'}
+  ];
+  const dates = (_workspace&&_workspace.importantDates) ? _workspace.importantDates : defDates;
+  const dtEl = document.getElementById('ws-dates');
+  if (dtEl) dtEl.innerHTML = dates.map(d=>{
+    const dObj=new Date(d.date.replace(/\./g,'-'));
+    const daysLeft=Math.ceil((dObj-new Date())/86400000);
+    const daysStr=daysLeft>0?`还有 ${daysLeft} 天`:(daysLeft===0?'就是今天！':'已过去');
+    return `<div class="ws-date-item">
+      <span style="color:rgba(255,210,240,0.7);font-size:13px">${d.emoji} ${d.label}</span>
+      <div style="text-align:right"><div style="color:rgba(255,180,220,0.6);font-size:11px;letter-spacing:1px">${d.date}</div><div style="color:rgba(255,210,240,0.5);font-size:10px">${daysStr}</div></div>
+    </div>`;
+  }).join('');
+  // 备忘
+  renderWsNotes();
+}
+async function toggleWsCheck(id) {
+  if (!_workspace) _workspace={newJob:{checklist:[{id:1,text:'准备好入职所需文件（身份证 / 证书 / 照片）',done:false},{id:2,text:'规划上班路线和时间',done:false},{id:3,text:'准备好工作装',done:false},{id:4,text:'了解公司基本资料和文化',done:false},{id:5,text:'设置好工作邮箱和公司系统',done:false},{id:6,text:'认识同事，了解部门架构',done:false}]},importantDates:[],notes:[]};
+  if (!_workspace.newJob) _workspace.newJob={checklist:[]};
+  if (!_workspace.newJob.checklist || !_workspace.newJob.checklist.length) {
+    _workspace.newJob.checklist=[{id:1,text:'准备好入职所需文件（身份证 / 证书 / 照片）',done:false},{id:2,text:'规划上班路线和时间',done:false},{id:3,text:'准备好工作装',done:false},{id:4,text:'了解公司基本资料和文化',done:false},{id:5,text:'设置好工作邮箱和公司系统',done:false},{id:6,text:'认识同事，了解部门架构',done:false}];
+  }
+  const item=_workspace.newJob.checklist.find(c=>c.id===id); if(!item) return;
+  item.done=!item.done;
+  renderWorkspace(); showToast(item.done?'✅ 准备好了！':'取消勾选'); await saveData();
+}
+function renderWsNotes() {
+  const el = document.getElementById('ws-notes-list'); if(!el) return;
+  const notes = (_workspace&&_workspace.notes)||[];
+  el.innerHTML = notes.length===0
+    ? '<div style="text-align:center;color:rgba(255,170,210,0.28);font-size:11px;letter-spacing:2px;padding:14px 0">还没有备忘，快来记录吧 📝</div>'
+    : notes.map((n,i)=>`<div class="ws-note-item" style="display:flex;justify-content:space-between;align-items:flex-start"><span style="flex:1">${n.text}<span style="color:rgba(255,160,200,0.3);font-size:10px;margin-left:8px">${n.date||''}</span></span><button onclick="deleteWsNote(${i})" style="background:transparent;border:none;color:rgba(255,130,170,0.2);cursor:pointer;font-size:15px;padding:0 3px" onmouseover="this.style.color='rgba(255,100,130,0.5)'" onmouseout="this.style.color='rgba(255,130,170,0.2)'">×</button></div>`).join('');
+}
+function showWsNoteInput() { document.getElementById('ws-note-input-row').style.display='block'; document.getElementById('ws-note-add-btn').style.display='none'; setTimeout(()=>document.getElementById('ws-note-input').focus(),50); }
+function hideWsNoteInput() { document.getElementById('ws-note-input-row').style.display='none'; document.getElementById('ws-note-add-btn').style.display=''; document.getElementById('ws-note-input').value=''; }
+async function addWsNote() {
+  const text=document.getElementById('ws-note-input').value.trim(); if(!text){showToast('写点什么吧 📝');return;}
+  if(!_workspace) _workspace={newJob:{startDate:'2026.06.08',salary:'MYR 5500',checklist:[{id:1,text:'准备好入职所需文件（身份证 / 证书 / 照片）',done:false},{id:2,text:'规划上班路线和时间',done:false},{id:3,text:'准备好工作装',done:false},{id:4,text:'了解公司基本资料和文化',done:false},{id:5,text:'设置好工作邮箱和公司系统',done:false},{id:6,text:'认识同事，了解部门架构',done:false}]},importantDates:[{date:'2026.06.08',label:'入职新工作',emoji:'🎊'},{date:'2026.09.05',label:'100天纪念日',emoji:'💙'},{date:'2026.11.28',label:'芷萱生日',emoji:'🎂'}],notes:[]};
+  if(!_workspace.notes) _workspace.notes=[];
+  const today=new Date().toLocaleDateString('zh-CN').replace(/\//g,'.');
+  _workspace.notes.unshift({text,date:today});
+  hideWsNoteInput(); renderWsNotes(); showToast('备忘已记录 📝'); await saveData();
+}
+async function deleteWsNote(i) {
+  if(!_workspace||!_workspace.notes) return;
+  _workspace.notes.splice(i,1); renderWsNotes(); await saveData();
 }
 
 async function updateZhixuanActive() {
