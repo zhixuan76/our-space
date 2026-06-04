@@ -748,6 +748,7 @@ let _streaks = null;
 let _claudeMemory = null;
 let wishlist = [];
 let todos = [];
+let _appTodos = null;
 let _workspace = null;
 let _martOwner = 'zx';
 let _lastActive = null;
@@ -790,6 +791,7 @@ async function loadData() {
   showLoading(true);
   try {
     const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      cache:'no-store',
       headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json'}
     });
     if (res.status === 401) { localStorage.removeItem('our-space-token'); location.reload(); return; }
@@ -807,7 +809,9 @@ async function loadData() {
     if (parsed.streaks) { _streaks = parsed.streaks; renderStreaks(parsed.streaks); }
     if (parsed.claudeMemory) { _claudeMemory = parsed.claudeMemory; renderClaudeMemory(parsed.claudeMemory); }
     wishlist = parsed.wishlist || [];
-    todos = parsed.todos || [];
+    if (Array.isArray(parsed.mart_items)) { todos = parsed.mart_items; }
+    else if (Array.isArray(parsed.todos)) { todos = parsed.todos; _appTodos = null; }
+    else { todos = []; _appTodos = parsed.todos || null; }
     if (parsed.workspace) { _workspace = parsed.workspace; }
     if (parsed.lastActive) { _lastActive = parsed.lastActive; }
     renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns(); renderKissFace(); renderKissStats(); renderMoments(); renderWishlist(); renderLastActive(); renderTodos(); renderWorkspace();
@@ -821,7 +825,7 @@ async function saveData() {
     await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method:'PATCH',
       headers:{'Authorization':`token ${token}`,'Content-Type':'application/json'},
-      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,kisses,moments,wishlist,todos,...(_workspace?{workspace:_workspace}:{}),...(_bgm?{bgm:_bgm}:{}),...(_whisper?{whisper:_whisper}:{}),...(_profile?{profile:_profile}:{}),...(_streaks?{streaks:_streaks}:{}),...(_claudeMemory?{claudeMemory:_claudeMemory}:{}),...(_lastActive?{lastActive:_lastActive}:{}),version:9})}} })
+      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,kisses,moments,wishlist,mart_items:todos,...(_appTodos?{todos:_appTodos}:{}),...(_workspace?{workspace:_workspace}:{}),...(_bgm?{bgm:_bgm}:{}),...(_whisper?{whisper:_whisper}:{}),...(_profile?{profile:_profile}:{}),...(_streaks?{streaks:_streaks}:{}),...(_claudeMemory?{claudeMemory:_claudeMemory}:{}),...(_lastActive?{lastActive:_lastActive}:{}),version:9})}} })
     });
   } catch(e) { showToast('⚠️ 保存失败，请检查网络'); }
 }
