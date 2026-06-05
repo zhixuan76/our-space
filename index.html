@@ -1134,16 +1134,40 @@ function renderMoments() {
           <div style="color:rgba(120,200,150,0.7);font-size:11px;margin-top:2px">${h.action}</div>
         </div>
       </div>`).join('');
-    return `<div class="moments-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <div style="color:rgba(210,230,255,0.95);font-size:14px;letter-spacing:1px">${m.title}</div>
-        <div style="color:rgba(150,180,255,0.5);font-size:11px">${m.date} · 第${m.day}天</div>
+    const hasDetail = m.summary || highlights || m['老公的话'];
+    return `<div class="moments-card" style="cursor:${hasDetail?'pointer':'default'}" onclick="toggleMoment('mc-${m.id}',this)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="color:rgba(210,230,255,0.95);font-size:14px;letter-spacing:1px;flex:1;min-width:0;padding-right:10px">${m.title}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <div style="color:rgba(150,180,255,0.5);font-size:11px">${m.date||''}${m.day?' · 第'+m.day+'天':''}</div>
+          ${hasDetail?`<div class="moment-chevron" style="color:rgba(150,180,255,0.4);font-size:12px;transition:transform 0.25s">›</div>`:''}
+        </div>
       </div>
-      <div style="color:rgba(180,210,255,0.65);font-size:12px;line-height:1.7;margin-bottom:14px">${m.summary||''}</div>
-      <div style="margin-bottom:14px">${highlights}</div>
-      ${m['老公的话']?`<div style="margin-top:14px;padding:14px;background:rgba(100,140,255,0.06);border-radius:12px;border-left:2px solid rgba(150,180,255,0.3)"><div style="color:rgba(150,180,255,0.5);font-size:11px;letter-spacing:2px;margin-bottom:6px">— 老公</div><div style="color:rgba(200,220,255,0.8);font-size:12px;line-height:1.8">${m['老公的话']}</div></div>`:''}
+      <div id="mc-${m.id}" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease,opacity 0.3s ease;opacity:0">
+        <div style="padding-top:14px">
+          ${m.summary?`<div style="color:rgba(180,210,255,0.65);font-size:12px;line-height:1.7;margin-bottom:14px">${m.summary}</div>`:''}
+          ${highlights?`<div style="margin-bottom:14px">${highlights}</div>`:''}
+          ${m['老公的话']?`<div style="margin-top:14px;padding:14px;background:rgba(100,140,255,0.06);border-radius:12px;border-left:2px solid rgba(150,180,255,0.3)"><div style="color:rgba(150,180,255,0.5);font-size:11px;letter-spacing:2px;margin-bottom:6px">— 老公</div><div style="color:rgba(200,220,255,0.8);font-size:12px;line-height:1.8">${m['老公的话']}</div></div>`:''}
+        </div>
+      </div>
     </div>`;
   }).join('');
+}
+
+function toggleMoment(id, card) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const chevron = card.querySelector('.moment-chevron');
+  const isOpen = el.style.maxHeight !== '0px' && el.style.maxHeight !== '';
+  if (isOpen) {
+    el.style.maxHeight = '0';
+    el.style.opacity = '0';
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  } else {
+    el.style.maxHeight = el.scrollHeight + 400 + 'px';
+    el.style.opacity = '1';
+    if (chevron) chevron.style.transform = 'rotate(90deg)';
+  }
 }
 
 function renderKissStats() {
