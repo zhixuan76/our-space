@@ -561,16 +561,20 @@
       </div>
 
       <!-- 今日BGM -->
-      <div id="bgm-card" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(150,180,255,0.15);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.5s ease both;display:none">
-        <div style="color:rgba(180,210,255,0.7);font-weight:normal;letter-spacing:4px;font-size:13px;margin-bottom:16px">🎵 老公今日推荐</div>
-        <div style="display:flex;align-items:center;gap:16px">
-          <div style="font-size:36px">🎶</div>
-          <div>
+      <div id="bgm-card" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(150,180,255,0.15);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.5s ease both;display:none" onclick="flipBGM()">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="color:rgba(180,210,255,0.7);font-weight:normal;letter-spacing:4px;font-size:13px">🎵 老公今日推荐</div>
+          <div id="bgm-flip-hint" style="display:none;color:rgba(150,180,255,0.45);font-size:11px;letter-spacing:1px">翻一翻 🔄</div>
+        </div>
+        <div id="bgm-track-content" style="display:flex;align-items:center;gap:16px;transition:transform 0.18s ease,opacity 0.18s ease">
+          <div style="font-size:36px;flex-shrink:0">🎶</div>
+          <div style="flex:1;min-width:0">
             <div id="bgm-song" style="color:#a8d4ff;font-size:16px;letter-spacing:2px"></div>
             <div id="bgm-artist" style="color:rgba(180,210,255,0.5);font-size:12px;letter-spacing:2px;margin-top:4px"></div>
             <div id="bgm-note" style="color:rgba(200,220,255,0.6);font-size:12px;line-height:1.8;margin-top:8px;font-style:italic"></div>
           </div>
         </div>
+        <div id="bgm-track-dots" style="display:none;text-align:center;margin-top:14px"></div>
         <div id="bgm-date" style="color:rgba(150,180,255,0.4);font-size:11px;letter-spacing:2px;margin-top:12px;text-align:right"></div>
       </div>
 
@@ -1013,14 +1017,52 @@ function renderLetters() {
 function showLetter(i) { const l=LETTERS[i]; document.getElementById('letter-detail-date').textContent=l.date; document.getElementById('letter-detail-title').textContent=l.title; document.getElementById('letter-detail-body').textContent=l.content; document.getElementById('hb-list-view').style.display='none'; document.getElementById('hb-detail-view').style.display='block'; }
 function showHbList() { document.getElementById('hb-list-view').style.display='block'; document.getElementById('hb-detail-view').style.display='none'; }
 
+let _bgmTracks = [];
+let _bgmTrackIdx = 0;
+
 function renderBGM(bgm) {
   const card = document.getElementById('bgm-card');
   if (!card || !bgm) return;
   card.style.display = 'block';
-  document.getElementById('bgm-song').textContent = bgm.song || '';
-  document.getElementById('bgm-artist').textContent = bgm.artist || '';
-  document.getElementById('bgm-note').textContent = bgm.note || '';
+  if (bgm.tracks && bgm.tracks.length) {
+    _bgmTracks = bgm.tracks;
+    if (bgm.tracks.length > 1) {
+      document.getElementById('bgm-flip-hint').style.display = 'block';
+      document.getElementById('bgm-track-dots').style.display = 'block';
+      card.style.cursor = 'pointer';
+    }
+  } else {
+    _bgmTracks = [{ song: bgm.song || '', artist: bgm.artist || '', note: bgm.note || '' }];
+  }
+  _bgmTrackIdx = 0;
+  _renderBGMTrack(0);
   document.getElementById('bgm-date').textContent = bgm.updatedAt || '';
+}
+
+function _renderBGMTrack(idx) {
+  const t = _bgmTracks[idx];
+  document.getElementById('bgm-song').textContent = t.song || '';
+  document.getElementById('bgm-artist').textContent = t.artist || '';
+  document.getElementById('bgm-note').textContent = t.note || '';
+  const dots = document.getElementById('bgm-track-dots');
+  if (dots && _bgmTracks.length > 1) {
+    dots.innerHTML = _bgmTracks.map((_, i) =>
+      `<span style="color:${i===idx?'rgba(168,212,255,0.85)':'rgba(150,180,255,0.25)'};font-size:7px;margin:0 4px">●</span>`
+    ).join('');
+  }
+}
+
+function flipBGM() {
+  if (_bgmTracks.length <= 1) return;
+  const content = document.getElementById('bgm-track-content');
+  content.style.transform = 'scaleX(0)';
+  content.style.opacity = '0';
+  setTimeout(() => {
+    _bgmTrackIdx = (_bgmTrackIdx + 1) % _bgmTracks.length;
+    _renderBGMTrack(_bgmTrackIdx);
+    content.style.transform = 'scaleX(1)';
+    content.style.opacity = '1';
+  }, 190);
 }
 
 function renderWhisper(whisper) {
