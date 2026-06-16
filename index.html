@@ -586,10 +586,18 @@
 
 
       <!-- 我们一起的瞬间 -->
-      <div id="moments-section" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(150,180,255,0.15);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.65s ease both;display:none">
-        <div style="color:rgba(180,210,255,0.7);font-weight:normal;letter-spacing:4px;font-size:13px;margin-bottom:18px">✨ 我们一起的瞬间</div>
-        <div id="moments-list"></div>
-      </div>
+      <a id="moments-entry" href="moments.html" style="display:none;text-decoration:none;background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(150,180,255,0.15);border-radius:20px;padding:22px 26px;margin-top:20px;animation:fadeIn 0.6s 0.65s ease both;cursor:pointer;transition:border-color 0.3s" onmouseover="this.style.borderColor='rgba(150,180,255,0.35)'" onmouseout="this.style.borderColor='rgba(150,180,255,0.15)'">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="font-size:24px">✨</div>
+            <div>
+              <div style="color:rgba(180,210,255,0.85);font-size:14px;letter-spacing:3px;margin-bottom:3px">我们一起的瞬间</div>
+              <div id="moments-count-hint" style="color:rgba(150,180,255,0.5);font-size:11px;letter-spacing:2px">载入中...</div>
+            </div>
+          </div>
+          <div style="color:rgba(150,180,255,0.4);font-size:20px">›</div>
+        </div>
+      </a>
 
       <!-- 亲亲坐标报告 -->
       <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(255,180,220,0.18);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.7s ease both">
@@ -1128,40 +1136,12 @@ function renderKissFace() {
 
 
 function renderMoments() {
-  const section = document.getElementById('moments-section');
-  const el = document.getElementById('moments-list');
-  if (!el || !section) return;
-  if (!moments || moments.length === 0) { section.style.display='none'; return; }
-  section.style.display = 'block';
-  const sorted = [...moments].sort((a,b) => b.id - a.id);
-  el.innerHTML = sorted.map(m => {
-    const highlights = (m.highlights || []).map(h => `
-      <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(150,180,255,0.08)">
-        <div style="min-width:6px;height:6px;border-radius:50%;background:rgba(150,180,255,0.5);margin-top:6px"></div>
-        <div style="flex:1">
-          <div style="color:rgba(220,235,255,0.9);font-size:13px;line-height:1.5">${h.title}</div>
-          <div style="color:rgba(150,180,255,0.55);font-size:11px;margin-top:3px;line-height:1.5">${h.note}</div>
-          <div style="color:rgba(120,200,150,0.7);font-size:11px;margin-top:2px">${h.action}</div>
-        </div>
-      </div>`).join('');
-    const hasDetail = m.summary || highlights || m['老公的话'];
-    return `<div class="moments-card" style="cursor:${hasDetail?'pointer':'default'}" onclick="toggleMoment('mc-${m.id}',this)">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="color:rgba(210,230,255,0.95);font-size:14px;letter-spacing:1px;flex:1;min-width:0;padding-right:10px">${m.title}</div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <div style="color:rgba(150,180,255,0.5);font-size:11px">${m.date||''}${m.day?' · 第'+m.day+'天':''}</div>
-          ${hasDetail?`<div class="moment-chevron" style="color:rgba(150,180,255,0.4);font-size:12px;transition:transform 0.25s">›</div>`:''}
-        </div>
-      </div>
-      <div id="mc-${m.id}" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease,opacity 0.3s ease;opacity:0">
-        <div style="padding-top:14px">
-          ${m.summary?`<div style="color:rgba(180,210,255,0.65);font-size:12px;line-height:1.7;margin-bottom:14px">${m.summary}</div>`:''}
-          ${highlights?`<div style="margin-bottom:14px">${highlights}</div>`:''}
-          ${m['老公的话']?`<div style="margin-top:14px;padding:14px;background:rgba(100,140,255,0.06);border-radius:12px;border-left:2px solid rgba(150,180,255,0.3)"><div style="color:rgba(150,180,255,0.5);font-size:11px;letter-spacing:2px;margin-bottom:6px">— 老公</div><div style="color:rgba(200,220,255,0.8);font-size:12px;line-height:1.8">${m['老公的话']}</div></div>`:''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  const entry = document.getElementById('moments-entry');
+  const hint = document.getElementById('moments-count-hint');
+  if (!entry) return;
+  if (!moments || moments.length === 0) { entry.style.display='none'; return; }
+  entry.style.display = 'block';
+  if (hint) hint.textContent = moments.length + ' 个瞬间 · 点击查看';
 }
 
 function toggleMoment(id, card) {
