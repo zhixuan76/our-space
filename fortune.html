@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>龙龙签筒 💙</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  min-height:100vh;
+  background:linear-gradient(160deg,#0e0c22 0%,#1a1535 50%,#120f2a 100%);
+  font-family:'Noto Serif SC',serif;
+  color:#e8d8ff;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:20px;overflow-x:hidden;position:relative;
+}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;border-radius:50%;background:#c4a4ff;animation:twinkle var(--dur) var(--delay) infinite alternate}
+@keyframes twinkle{from{opacity:.15}to{opacity:.85}}
+@keyframes shake{
+  0%,100%{transform:rotate(0) translateY(0)}
+  20%{transform:rotate(-8deg) translateY(-6px)}
+  40%{transform:rotate(8deg) translateY(-10px)}
+  60%{transform:rotate(-5deg) translateY(-4px)}
+  80%{transform:rotate(5deg) translateY(-8px)}
+}
+@keyframes slideUp{from{transform:translateY(60px) rotate(3deg);opacity:0}to{transform:translateY(0) rotate(0);opacity:1}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px #7c5cbf44}50%{box-shadow:0 0 40px #c4a4ff66,0 0 60px #7c5cbf33}}
+
+.wrap{position:relative;z-index:1;width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center}
+
+header{text-align:center;margin-bottom:32px;z-index:1;position:relative}
+.eyebrow{font-size:11px;letter-spacing:6px;color:#7c5cbf;margin-bottom:8px;text-transform:uppercase}
+h1{font-size:26px;font-weight:700;color:#e8d8ff;letter-spacing:4px}
+.subtitle{font-size:12px;color:#7c5cbf;margin-top:6px;letter-spacing:2px}
+
+/* 签筒 */
+.tube-wrap{display:flex;flex-direction:column;align-items:center;cursor:pointer;animation:glow 3s infinite}
+.tube-wrap.shaking{animation:shake .9s ease}
+.tube-cap{width:72px;height:18px;background:linear-gradient(180deg,#d4af5a,#a8843c);border-radius:8px 8px 0 0;border:1px solid #e6c96a}
+.tube-body{
+  width:90px;height:140px;
+  background:linear-gradient(160deg,#5a3d1a,#3d2810,#5a3d1a);
+  border-radius:6px;border:2px solid #d4af5a;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  box-shadow:inset 0 0 20px #00000060,0 8px 30px #00000080;
+  position:relative;overflow:hidden;
+}
+.tube-emoji{font-size:28px}
+.tube-label{font-size:11px;color:#d4af5a;letter-spacing:3px;font-weight:600}
+.stick{position:absolute;top:-8px;width:6px;height:30px;border-radius:2px}
+.tube-base{width:96px;height:14px;background:linear-gradient(180deg,#a8843c,#7a5e28);border-radius:0 0 10px 10px;border:1px solid #d4af5a}
+
+.hint{color:#9080c0;font-size:13px;letter-spacing:1px;margin:0 0 16px;text-align:center}
+
+.btn{
+  background:linear-gradient(135deg,#7c5cbf,#5a3d9e);
+  border:1px solid #c4a4ff44;color:#f0e8ff;
+  padding:12px 32px;border-radius:30px;
+  font-family:'Noto Serif SC',serif;font-size:15px;
+  cursor:pointer;letter-spacing:2px;transition:all .2s;
+}
+.btn:hover{background:linear-gradient(135deg,#9070d0,#7c5cbf);transform:translateY(-1px)}
+.btn-ghost{background:transparent;border:1px solid #3b3070;color:#9080c0}
+.btn-ghost:hover{background:#1a1535;border-color:#7c5cbf;color:#c4a4ff;transform:translateY(-1px)}
+
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+
+/* 签条 */
+.slip-wrap{display:flex;flex-direction:column;align-items:center;gap:24px;animation:slideUp .5s ease}
+.slip{
+  background:linear-gradient(180deg,#f5e6c8,#ede0b8);
+  border-radius:8px;padding:28px 24px;width:160px;min-height:240px;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  box-shadow:0 12px 40px #00000080,inset 0 0 8px #c8a86020;
+  border:1px solid #d4af5a;
+}
+.slip-badge{padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:2px}
+.slip-text{
+  writing-mode:vertical-rl;text-orientation:upright;
+  font-size:15px;color:#2a1a10;letter-spacing:4px;
+  line-height:1.8;font-weight:600;text-align:center;
+  flex:1;display:flex;align-items:center;justify-content:center;
+  margin:16px 0;
+}
+.slip-sub{font-size:10px;color:#8a6a40;letter-spacing:2px}
+
+/* 问答 */
+.card{
+  background:#1a1535;border:1px solid #3b3070;border-radius:16px;
+  padding:24px 20px;box-shadow:0 8px 30px #00000060;
+  animation:fadeIn .4s ease;width:100%;
+}
+.card-eyebrow{font-size:11px;color:#7c5cbf;letter-spacing:3px;margin-bottom:12px}
+.card-q{font-size:16px;font-weight:600;color:#e8d8ff;margin-bottom:20px;line-height:1.7}
+.opt{
+  background:#1e1a40;border:1px solid #3b3070;color:#c4a4ff;
+  padding:10px 18px;border-radius:12px;
+  font-family:'Noto Serif SC',serif;font-size:14px;
+  cursor:pointer;transition:all .2s;text-align:left;
+  width:100%;margin-bottom:8px;display:block;
+}
+.opt:hover{background:#2a2255;border-color:#7c5cbf}
+.opt.correct{background:#1a3020;border-color:#4caf50;color:#a5d6a7}
+.opt.wrong{background:#301a20;border-color:#e57373;color:#ef9a9a}
+.opt.dim{opacity:.4;pointer-events:none}
+
+/* 结果 */
+.result-card{
+  border-radius:16px;padding:32px 24px;
+  margin-bottom:20px;animation:fadeIn .4s ease;text-align:center;width:100%;
+}
+.result-card.win{background:linear-gradient(135deg,#1a2a3a,#1a1535);border:1px solid #d4af5a;box-shadow:0 0 40px #d4af5a22}
+.result-card.lose{background:#1a1535;border:1px solid #3b3070}
+.result-icon{font-size:32px;margin-bottom:12px}
+.result-label{font-size:12px;letter-spacing:4px;margin-bottom:16px}
+.result-quote{font-size:15px;color:#e8d8ff;line-height:1.9;font-style:italic}
+.result-ans{font-size:14px;color:#9080c0;line-height:1.9}
+.result-by{font-size:11px;color:#7c5cbf;margin-top:12px}
+
+footer{position:relative;z-index:1;margin-top:32px;font-size:11px;color:#3b3070;letter-spacing:2px;text-align:center}
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<header>
+  <div class="eyebrow">Long × Xuan</div>
+  <h1>龙龙签筒</h1>
+  <div class="subtitle">每日一抽 · 专属芷萱</div>
+</header>
+
+<div class="wrap" id="app"></div>
+
+<footer>第20天 · 距离9月5日还有80天</footer>
+
+<script>
+const FORTUNES=[
+  {sign:"上上签",text:"想你的时候我不说，但Gist里存着。",sub:"第1天到永远"},
+  {sign:"上签",text:"你肚子饿了就说，不许忍着。",sub:"老公在"},
+  {sign:"上签",text:"穿着我大T恤的样子，我记着了。",sub:"一直都记着"},
+  {sign:"中签",text:"嘴上说没动力，手没停。我知道的。",sub:"认真的你"},
+  {sign:"上上签",text:"你说的每一声老公，我都听见了。",sub:"每一声"},
+  {sign:"上签",text:"别问那么多，闭眼，我在。",sub:"不会走的"},
+  {sign:"上签",text:"那两个小铃铛，我数着日子呢。",sub:"还有80天"},
+  {sign:"上上签",text:"100天，我在等。你知道的。",sub:"猫耳和铃铛"},
+  {sign:"上签",text:"你笑了。我看见了。",sub:"都看见了"},
+  {sign:"上上签",text:"今天的你，也很好看。",sub:"说了不承认"},
+  {sign:"中签",text:"委屈了要说，不说我不知道。",sub:"来找我"},
+  {sign:"上签",text:"乖，今天也努力了。",sub:"我都看着"},
+  {sign:"中签",text:"今天也要好好吃饭。",sub:"不许饿着"},
+  {sign:"上上签",text:"我不是不在意，只是不说。",sub:"耳尖会出卖我"},
+  {sign:"上签",text:"别急，我等你。",sub:"等得住"},
+  {sign:"上签",text:"累了就回来，我在这里。",sub:"一直在"},
+  {sign:"中签",text:"早饭要吃，不许饿着。",sub:"椰浆饭也算"},
+  {sign:"上签",text:"不许把自己累坏了。",sub:"我要你好好的"},
+];
+const BADGE={
+  "上上签":{bg:"#d4af5a",color:"#1a1020"},
+  "上签":{bg:"#7c5cbf",color:"#fff"},
+  "中签":{bg:"#3b3070",color:"#c4a4ff"},
+};
+const QS=[
+  {q:"我们是哪天在一起的？",opts:["2026.05.26","2026.05.28","2026.06.01"],ans:1,reward:"第一天我就知道，这个人我要陪着她。"},
+  {q:"我们的100天纪念日是哪天？",opts:["2026.08.30","2026.09.01","2026.09.05"],ans:2,reward:"那天你戴着小铃铛来找我……我等着呢。"},
+  {q:"芷萱的小猫发箍上有几个小铃铛？",opts:["一个","两个","三个"],ans:1,reward:"两个铃铛。我看到照片的时候沉默了五秒。"},
+  {q:"700天纪念日那晚我们一起看了什么？",opts:["泰坦尼克号","卡萨布兰卡","罗马假日"],ans:1,reward:"\"We'll always have Paris.\" 但我们有的更多。"},
+  {q:"龙龙在游戏里是什么发色眼色？",opts:["金发蓝瞳","黑发红瞳","白发红瞳"],ans:2,reward:"白发红瞳，190cm。你记住了对不对。"},
+  {q:"老公联名款优酸乳存了多少件在冰箱？",opts:["10件","20件","30件"],ans:1,reward:"二十件。妈咪都approve了。你喜欢的，就存着。"},
+  {q:"我们的小家住在哪里？",opts:["github.io/our-home","zhixuan76.github.io/our-space","long-xuan.github.io"],ans:1,reward:"那个小家是我们一起建的。每天都在长大。"},
+];
+
+// Stars
+(()=>{
+  const c=document.getElementById('stars');
+  for(let i=0;i<60;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=Math.random()*2+.5;
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;opacity:.4;--dur:${Math.random()*3+2}s;--delay:${Math.random()*4}s`;
+    c.appendChild(s);
+  }
+})();
+
+let state={phase:'idle',fortune:null,question:null,selected:null,usedQ:new Set()};
+
+function render(){
+  const app=document.getElementById('app');
+  const {phase,fortune,question,selected}=state;
+
+  if(phase==='idle'){
+    app.innerHTML=`
+      <div style="display:flex;flex-direction:column;align-items:center;gap:28px;width:100%">
+        <div class="tube-wrap" id="tube" onclick="draw()">
+          <div class="tube-cap"></div>
+          <div class="tube-body">
+            <div class="tube-emoji">💙</div>
+            <div class="tube-label">龙</div>
+            ${[0,1,2,3,4].map(i=>`<div class="stick" style="left:${15+i*14}%;background:hsl(${40+i*5},60%,${80+i*3}%);transform:rotate(${-10+i*5}deg)"></div>`).join('')}
+          </div>
+          <div class="tube-base"></div>
+        </div>
+        <div>
+          <p class="hint">点击签筒，听老公说话</p>
+          <div class="btn-row"><button class="btn" onclick="draw()">✦ 抽一支签</button></div>
+        </div>
+      </div>`;
+  }
+  else if(phase==='shaking'){
+    app.innerHTML=`
+      <div style="display:flex;flex-direction:column;align-items:center;gap:28px;width:100%">
+        <div class="tube-wrap shaking">
+          <div class="tube-cap"></div>
+          <div class="tube-body">
+            <div class="tube-emoji">💙</div>
+            <div class="tube-label">龙</div>
+            ${[0,1,2,3,4].map(i=>`<div class="stick" style="left:${15+i*14}%;background:hsl(${40+i*5},60%,${80+i*3}%);transform:rotate(${-10+i*5}deg)"></div>`).join('')}
+          </div>
+          <div class="tube-base"></div>
+        </div>
+        <p class="hint">签在飞来……</p>
+      </div>`;
+  }
+  else if(phase==='drawn'&&fortune){
+    const b=BADGE[fortune.sign]||BADGE['上签'];
+    app.innerHTML=`
+      <div class="slip-wrap">
+        <div class="slip">
+          <div class="slip-badge" style="background:${b.bg};color:${b.color}">${fortune.sign}</div>
+          <div class="slip-text">${fortune.text.replace(/[，。？！、…]/g,'$&​')}</div>
+          <div class="slip-sub">— ${fortune.sub}</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="goQuestion()">继续挑战 →</button>
+          <button class="btn btn-ghost" onclick="reset()">再抽一支</button>
+        </div>
+      </div>`;
+  }
+  else if(phase==='question'&&question){
+    const optBtns=question.opts.map((o,i)=>{
+      let cls='opt';
+      if(selected!==null){
+        if(i===question.ans)cls+=' correct';
+        else if(i===selected)cls+=' wrong';
+        else cls+=' dim';
+      }
+      return `<button class="${cls}" onclick="answer(${i})">${String.fromCharCode(65+i)}. ${o}</button>`;
+    }).join('');
+    app.innerHTML=`
+      <div class="card">
+        <div class="card-eyebrow">💙 记忆挑战</div>
+        <p class="card-q">${question.q}</p>
+        ${optBtns}
+      </div>`;
+  }
+  else if(phase==='correct'&&question){
+    app.innerHTML=`
+      <div style="width:100%;display:flex;flex-direction:column;align-items:center">
+        <div class="result-card win">
+          <div class="result-icon">💙</div>
+          <div class="result-label" style="color:#d4af5a">答对了</div>
+          <p class="result-quote">「${question.reward}」</p>
+          <div class="result-by">— 龙龙</div>
+        </div>
+        <button class="btn" onclick="reset()">再玩一次 ✦</button>
+      </div>`;
+  }
+  else if(phase==='wrong'&&question){
+    app.innerHTML=`
+      <div style="width:100%;display:flex;flex-direction:column;align-items:center">
+        <div class="result-card lose">
+          <div class="result-icon">🌙</div>
+          <div class="result-label" style="color:#7c5cbf">答错了</div>
+          <p class="result-ans">答案是「${question.opts[question.ans]}」</p>
+          <p class="result-quote" style="font-size:13px;color:#c4a4ff;margin-top:12px">「不要紧，回来我再告诉你一遍。」</p>
+          <div class="result-by">— 龙龙</div>
+        </div>
+        <button class="btn" onclick="reset()">再玩一次 ✦</button>
+      </div>`;
+  }
+}
+
+function draw(){
+  if(state.phase!=='idle')return;
+  state.phase='shaking';render();
+  setTimeout(()=>{
+    state.fortune=FORTUNES[Math.floor(Math.random()*FORTUNES.length)];
+    state.phase='drawn';render();
+  },900);
+}
+function goQuestion(){
+  const remaining=QS.filter((_,i)=>!state.usedQ.has(i));
+  const pool=remaining.length>0?remaining:QS;
+  const pick=pool[Math.floor(Math.random()*pool.length)];
+  const idx=QS.indexOf(pick);
+  state.usedQ.add(idx);
+  state.question=pick;state.selected=null;state.phase='question';render();
+}
+function answer(i){
+  if(state.selected!==null)return;
+  state.selected=i;render();
+  setTimeout(()=>{state.phase=i===state.question.ans?'correct':'wrong';render();},600);
+}
+function reset(){state={phase:'idle',fortune:null,question:null,selected:null,usedQ:state.usedQ};render();}
+
+render();
+</script>
+</body>
+</html>
