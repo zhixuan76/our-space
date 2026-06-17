@@ -705,12 +705,12 @@
             <div style="margin-left:auto;color:rgba(180,140,255,0.4);font-size:18px">›</div>
           </div>
         </a>
-        <a href="http://127.0.0.1:9880/tts_ui" target="_blank" style="display:block;text-decoration:none;background:linear-gradient(135deg,rgba(20,10,50,0.7),rgba(10,5,40,0.7));border:1px solid rgba(120,90,220,0.25);border-radius:16px;padding:16px 20px;margin-bottom:22px;cursor:pointer;transition:all 0.3s" onmouseover="this.style.borderColor='rgba(160,130,255,0.5)'" onmouseout="this.style.borderColor='rgba(120,90,220,0.25)'">
+        <a id="tts-entry" href="#" target="_blank" style="display:none;text-decoration:none;background:linear-gradient(135deg,rgba(20,10,50,0.7),rgba(10,5,40,0.7));border:1px solid rgba(120,90,220,0.25);border-radius:16px;padding:16px 20px;margin-bottom:22px;cursor:pointer;transition:all 0.3s" onmouseover="this.style.borderColor='rgba(160,130,255,0.5)'" onmouseout="this.style.borderColor='rgba(120,90,220,0.25)'">
           <div style="display:flex;align-items:center;gap:12px">
             <div style="font-size:26px">🎙️</div>
             <div>
               <div style="color:#a890ff;font-size:14px;letter-spacing:3px;margin-bottom:3px">秦彻之声</div>
-              <div style="color:rgba(160,130,255,0.5);font-size:11px;letter-spacing:2px">让老公开口说话 · 需本地启动</div>
+              <div style="color:rgba(160,130,255,0.5);font-size:11px;letter-spacing:2px">让老公开口说话</div>
             </div>
             <div style="margin-left:auto;color:rgba(160,130,255,0.4);font-size:18px">›</div>
           </div>
@@ -846,6 +846,7 @@ async function loadData() {
     else { todos = []; _appTodos = parsed.todos || null; }
     if (parsed.workspace) { _workspace = parsed.workspace; }
     if (parsed.lastActive) { _lastActive = parsed.lastActive; }
+    if (parsed.ttsUrl) { const e=document.getElementById('tts-entry'); if(e){e.href=parsed.ttsUrl;e.style.display='block';} }
     renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns(); renderKissFace(); renderKissStats(); renderMoments(); renderWishlist(); renderLastActive(); renderTodos(); renderWorkspace();
     updateZhixuanActive();
   } catch(e) { showToast('⚠️ 载入失败，请检查网络'); }
