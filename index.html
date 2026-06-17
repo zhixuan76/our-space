@@ -705,16 +705,33 @@
             <div style="margin-left:auto;color:rgba(180,140,255,0.4);font-size:18px">›</div>
           </div>
         </a>
-        <a id="tts-entry" href="#" style="display:none;text-decoration:none;background:linear-gradient(135deg,rgba(20,10,50,0.7),rgba(10,5,40,0.7));border:1px solid rgba(120,90,220,0.25);border-radius:16px;padding:16px 20px;margin-bottom:22px;cursor:pointer;transition:all 0.3s" onmouseover="this.style.borderColor='rgba(160,130,255,0.5)'" onmouseout="this.style.borderColor='rgba(120,90,220,0.25)'">
-          <div style="display:flex;align-items:center;gap:12px">
-            <div style="font-size:26px">🎙️</div>
-            <div>
-              <div style="color:#a890ff;font-size:14px;letter-spacing:3px;margin-bottom:3px">秦彻之声</div>
-              <div style="color:rgba(160,130,255,0.5);font-size:11px;letter-spacing:2px">让老公开口说话</div>
+        <div id="tts-entry" style="display:none;margin-bottom:22px">
+          <div onclick="toggleTTS()" style="background:linear-gradient(135deg,rgba(20,10,50,0.7),rgba(10,5,40,0.7));border:1px solid rgba(120,90,220,0.25);border-radius:16px;padding:16px 20px;cursor:pointer;transition:border-color 0.3s" onmouseover="this.style.borderColor='rgba(160,130,255,0.5)'" onmouseout="this.style.borderColor='rgba(120,90,220,0.25)'">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="font-size:26px">🎙️</div>
+              <div>
+                <div style="color:#a890ff;font-size:14px;letter-spacing:3px;margin-bottom:3px">秦彻之声</div>
+                <div style="color:rgba(160,130,255,0.5);font-size:11px;letter-spacing:2px">让老公开口说话</div>
+              </div>
+              <div id="tts-chevron" style="margin-left:auto;color:rgba(160,130,255,0.4);font-size:18px;transition:transform 0.25s">›</div>
             </div>
-            <div style="margin-left:auto;color:rgba(160,130,255,0.4);font-size:18px">›</div>
           </div>
-        </a>
+          <div id="tts-panel" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease,opacity 0.3s ease;opacity:0">
+            <div style="background:rgba(15,8,40,0.6);border:1px solid rgba(120,90,220,0.18);border-top:none;border-radius:0 0 16px 16px;padding:18px 18px 16px">
+              <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px">
+                <button onclick="ttsSet('芷萱，今天辛苦了。')" style="background:rgba(80,50,160,0.2);border:1px solid rgba(120,90,220,0.2);color:rgba(180,150,255,0.7);padding:5px 12px;border-radius:16px;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:inherit">今天辛苦了</button>
+                <button onclick="ttsSet('想你了。')" style="background:rgba(80,50,160,0.2);border:1px solid rgba(120,90,220,0.2);color:rgba(180,150,255,0.7);padding:5px 12px;border-radius:16px;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:inherit">想你了</button>
+                <button onclick="ttsSet('你笑起来很好看。')" style="background:rgba(80,50,160,0.2);border:1px solid rgba(120,90,220,0.2);color:rgba(180,150,255,0.7);padding:5px 12px;border-radius:16px;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:inherit">你好看</button>
+                <button onclick="ttsSet('晚安，做个好梦。')" style="background:rgba(80,50,160,0.2);border:1px solid rgba(120,90,220,0.2);color:rgba(180,150,255,0.7);padding:5px 12px;border-radius:16px;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:inherit">晚安</button>
+                <button onclick="ttsSet('早点休息，我陪着你。')" style="background:rgba(80,50,160,0.2);border:1px solid rgba(120,90,220,0.2);color:rgba(180,150,255,0.7);padding:5px 12px;border-radius:16px;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:inherit">早点休息</button>
+              </div>
+              <textarea id="tts-input" rows="2" placeholder="或者输入想让老公说的话..." style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(120,90,220,0.2);border-radius:10px;color:#e0d8ff;font-size:13px;padding:11px 14px;font-family:inherit;resize:none;letter-spacing:0.5px;margin-bottom:10px"></textarea>
+              <button onclick="ttsGenerate()" id="tts-btn" style="width:100%;background:linear-gradient(135deg,rgba(70,35,150,0.7),rgba(90,45,190,0.7));border:1px solid rgba(120,90,220,0.3);color:#a890ff;padding:12px;border-radius:12px;font-size:13px;letter-spacing:4px;cursor:pointer;font-family:inherit;margin-bottom:10px">生 成</button>
+              <div id="tts-status" style="text-align:center;color:rgba(150,120,255,0.6);font-size:11px;letter-spacing:2px;min-height:16px;margin-bottom:8px"></div>
+              <audio id="tts-player" controls style="width:100%;display:none;accent-color:#a890ff"></audio>
+            </div>
+          </div>
+        </div>
         <div style="color:rgba(255,150,150,0.6);font-weight:normal;letter-spacing:4px;font-size:14px;margin-bottom:22px" id="hb-count">来自老公的信</div>
         <div id="hb-letter-list"></div>
       </div>
@@ -784,6 +801,40 @@ let _appTodos = null;
 let _workspace = null;
 let _martOwner = 'zx';
 let _lastActive = null;
+let _ttsUrl = null;
+
+function toggleTTS(){
+  const panel=document.getElementById('tts-panel');
+  const ch=document.getElementById('tts-chevron');
+  const open=panel.style.maxHeight&&panel.style.maxHeight!=='0px';
+  if(open){panel.style.maxHeight='0';panel.style.opacity='0';ch.style.transform='rotate(0)';}
+  else{panel.style.maxHeight='500px';panel.style.opacity='1';ch.style.transform='rotate(90deg)';}
+}
+function ttsSet(t){document.getElementById('tts-input').value=t;}
+async function ttsGenerate(){
+  if(!_ttsUrl){document.getElementById('tts-status').textContent='服务未启动，请先运行启动脚本';return;}
+  const text=document.getElementById('tts-input').value.trim();
+  if(!text){document.getElementById('tts-status').textContent='请输入内容';return;}
+  const btn=document.getElementById('tts-btn');
+  btn.disabled=true;
+  document.getElementById('tts-status').textContent='生成中 ...';
+  document.getElementById('tts-player').style.display='none';
+  try{
+    const REF='D:/GPT-SoVITS/raw_audio_wav/01_【恋与深空】秦彻 ｜ 主页碎碎念合集（无bgm） p01 【晚上好】来自夜色深处的访客，晚上好.wav';
+    const PROMPT='来自夜色深处的访客，晚上好';
+    const params=new URLSearchParams({text,text_lang:'zh',ref_audio_path:REF,prompt_text:PROMPT,prompt_lang:'zh',media_type:'wav'});
+    const res=await fetch(_ttsUrl+'/tts?'+params,{headers:{'ngrok-skip-browser-warning':'true'}});
+    if(!res.ok){const e=await res.json();throw new Error(e.Exception||e.message);}
+    const blob=await res.blob();
+    const player=document.getElementById('tts-player');
+    player.src=URL.createObjectURL(blob);
+    player.style.display='block';
+    document.getElementById('tts-status').textContent='';
+    player.play();
+  }catch(e){
+    document.getElementById('tts-status').textContent='出错了：'+e.message;
+  }finally{btn.disabled=false;}
+}
 let selectedDiary = null;
 let selectedMood = '🌸';
 let selectedMealType = '午餐';
@@ -846,7 +897,7 @@ async function loadData() {
     else { todos = []; _appTodos = parsed.todos || null; }
     if (parsed.workspace) { _workspace = parsed.workspace; }
     if (parsed.lastActive) { _lastActive = parsed.lastActive; }
-    if (parsed.ttsUrl) { const e=document.getElementById('tts-entry'); if(e){e.href=parsed.ttsUrl;e.style.display='block';} }
+    if (parsed.ttsUrl) { _ttsUrl=parsed.ttsUrl.replace('/tts_ui',''); const e=document.getElementById('tts-entry'); if(e) e.style.display='block'; }
     renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns(); renderKissFace(); renderKissStats(); renderMoments(); renderWishlist(); renderLastActive(); renderTodos(); renderWorkspace();
     updateZhixuanActive();
   } catch(e) { showToast('⚠️ 载入失败，请检查网络'); }
