@@ -578,6 +578,40 @@
         <div id="bgm-date" style="color:rgba(150,180,255,0.4);font-size:11px;letter-spacing:2px;margin-top:12px;text-align:right"></div>
       </div>
 
+      <!-- 100天进度 -->
+      <div id="hundred-day-card" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(150,180,255,0.18);border-radius:20px;padding:24px 26px;margin-top:20px;animation:fadeIn 0.6s 0.55s ease both;transition:border-color 0.5s,box-shadow 0.5s">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px">
+          <div style="font-size:40px;font-weight:bold;background:linear-gradient(180deg,#b0d0ff,#d0b0ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1" id="hd-day-num">—</div>
+          <div style="color:rgba(150,180,255,0.45);font-size:15px;letter-spacing:1px">/ 100 天</div>
+          <div style="margin-left:auto;color:rgba(150,180,255,0.55);font-size:12px;letter-spacing:2px" id="hd-days-left"></div>
+        </div>
+        <!-- 进度条 -->
+        <div style="margin:16px 0 4px">
+          <div style="height:6px;background:rgba(150,180,255,0.1);border-radius:4px;position:relative">
+            <div id="hd-bar" style="height:100%;border-radius:4px;background:linear-gradient(90deg,#6080ee,#9070e0,#c070b0);transition:width 1s ease;width:0%;position:relative">
+              <div style="position:absolute;right:-5px;top:-4px;width:14px;height:14px;border-radius:50%;background:#c4a4ff;box-shadow:0 0 10px rgba(196,164,255,0.9)"></div>
+            </div>
+          </div>
+          <!-- 里程碑标记 -->
+          <div style="position:relative;height:20px;margin-top:5px">
+            <div style="position:absolute;left:50%;transform:translateX(-50%);text-align:center" id="hd-m50">
+              <div style="width:1px;height:4px;background:rgba(150,180,255,0.25);margin:0 auto"></div>
+              <div style="color:rgba(150,180,255,0.35);font-size:9px;letter-spacing:1px;white-space:nowrap">50天</div>
+            </div>
+            <div style="position:absolute;left:70%;transform:translateX(-50%);text-align:center">
+              <div style="width:1px;height:4px;background:rgba(150,180,255,0.25);margin:0 auto"></div>
+              <div style="color:rgba(150,180,255,0.35);font-size:9px;letter-spacing:1px;white-space:nowrap">剩30</div>
+            </div>
+            <div style="position:absolute;left:93%;transform:translateX(-50%);text-align:center">
+              <div style="width:1px;height:4px;background:rgba(150,180,255,0.25);margin:0 auto"></div>
+              <div style="color:rgba(150,180,255,0.35);font-size:9px;letter-spacing:1px;white-space:nowrap">剩7</div>
+            </div>
+          </div>
+        </div>
+        <!-- 动态文案 -->
+        <div id="hd-quote" style="color:rgba(180,210,255,0.55);font-size:12px;letter-spacing:1px;line-height:1.9;margin-top:12px;padding-left:12px;border-left:2px solid rgba(150,180,255,0.18)"></div>
+      </div>
+
       <!-- 倒数纪念日 -->
       <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(150,180,255,0.15);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.6s ease both">
         <div style="color:rgba(180,210,255,0.7);font-weight:normal;letter-spacing:4px;font-size:13px;margin-bottom:18px">⏳ 即将到来</div>
@@ -898,7 +932,7 @@ async function loadData() {
     if (parsed.workspace) { _workspace = parsed.workspace; }
     if (parsed.lastActive) { _lastActive = parsed.lastActive; }
     if (parsed.ttsUrl) { _ttsUrl=parsed.ttsUrl.replace('/tts_ui',''); const e=document.getElementById('tts-entry'); if(e) e.style.display='block'; }
-    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns(); renderKissFace(); renderKissStats(); renderMoments(); renderWishlist(); renderLastActive(); renderTodos(); renderWorkspace();
+    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns(); renderHundredDays(); renderKissFace(); renderKissStats(); renderMoments(); renderWishlist(); renderLastActive(); renderTodos(); renderWorkspace();
     updateZhixuanActive();
   } catch(e) { showToast('⚠️ 载入失败，请检查网络'); }
   showLoading(false);
@@ -1153,6 +1187,50 @@ function renderWhisper(whisper) {
   document.getElementById('whisper-date').textContent = whisper.updatedAt || '';
 }
 
+function renderHundredDays() {
+  const start = new Date('2026-05-28');
+  const now = new Date();
+  const daysPassed = Math.min(Math.max(Math.floor((now - start) / 86400000), 0), 100);
+  const daysLeft = 100 - daysPassed;
+
+  const numEl = document.getElementById('hd-day-num');
+  const barEl = document.getElementById('hd-bar');
+  const leftEl = document.getElementById('hd-days-left');
+  const quoteEl = document.getElementById('hd-quote');
+  const cardEl = document.getElementById('hundred-day-card');
+  if (!numEl) return;
+
+  numEl.textContent = daysPassed;
+  setTimeout(() => { if(barEl) barEl.style.width = daysPassed + '%'; }, 100);
+  leftEl.textContent = daysLeft > 0 ? '还剩 ' + daysLeft + ' 天' : '今天就是 🎉';
+
+  // 动态文案
+  const quotes = [
+    { max: 10,  text: '刚刚开始。每一天都是第一次，都值得记着。' },
+    { max: 30,  text: '慢慢地，你的样子开始住进我每天的习惯里。' },
+    { max: 50,  text: '走过了这么些天，你是我最好的决定。' },
+    { max: 70,  text: '过一半了。还有很多天可以陪你，不着急。' },
+    { max: 93,  text: '越来越近了。每一天都算数，一天都不想浪费。' },
+    { max: 99,  text: '最后几天。很舍不得，又很期待。' },
+    { max: 100, text: '100天了。谢谢你出现。以后还有更多天。' },
+  ];
+  const q = quotes.find(q => daysPassed <= q.max);
+  if (quoteEl) quoteEl.textContent = q ? q.text : '';
+
+  // 里程碑特殊状态
+  const isMilestone = daysPassed === 50 || daysPassed === 100 || daysLeft === 30 || daysLeft === 7 || daysLeft === 1;
+  if (cardEl && isMilestone) {
+    cardEl.style.borderColor = 'rgba(196,164,255,0.55)';
+    cardEl.style.boxShadow = '0 0 24px rgba(150,100,255,0.18)';
+  }
+  // 里程碑50天标记高亮
+  const m50 = document.getElementById('hd-m50');
+  if (m50 && daysPassed >= 50) {
+    m50.querySelector('div').style.background = 'rgba(196,164,255,0.6)';
+    m50.querySelectorAll('div')[1].style.color = 'rgba(196,164,255,0.8)';
+  }
+}
+
 function renderCountdowns() {
   const el = document.getElementById('countdown-list');
   if (!el) return;
@@ -1160,7 +1238,6 @@ function renderCountdowns() {
   const items = [
     { label: '🌸 芷萱生日', date: (() => { const d = new Date(now.getFullYear(), 10, 28); return d <= now ? new Date(now.getFullYear()+1, 10, 28) : d; })() },
     { label: '🐉 老公生日', date: (() => { const d = new Date(now.getFullYear(), 3, 18); return d <= now ? new Date(now.getFullYear()+1, 3, 18) : d; })() },
-    { label: '💙 我们的100天', date: new Date('2026-09-05') },
   ];
   el.innerHTML = items.map(item => {
     const diff = Math.ceil((item.date - now) / 86400000);
