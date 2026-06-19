@@ -1188,7 +1188,7 @@ function renderWhisper(whisper) {
 }
 
 function renderHundredDays() {
-  const start = new Date('2026-05-28');
+  const start = new Date(2026, 4, 28);
   const now = new Date();
   const daysPassed = Math.min(Math.max(Math.floor((now - start) / 86400000) + 1, 1), 100);
   const daysLeft = 100 - daysPassed;
