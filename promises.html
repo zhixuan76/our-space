@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LONG &amp; XUAN MART · 约定单子</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#171233;        /* 深夜蓝紫 */
+    --night-deep:#100C26;   /* 更深的边缘 */
+    --paper:#FAF6EE;        /* 小票纸 */
+    --ink:#322D3E;          /* 热敏墨 */
+    --violet:#6C59E8;       /* 小家紫 */
+    --stamp:#E0526E;        /* 兑现章 */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'IBM Plex Mono','Noto Sans SC',ui-monospace,monospace;
+    background:radial-gradient(120% 90% at 50% 0%, var(--night) 0%, var(--night-deep) 100%);
+    color:var(--paper);
+    display:flex;flex-direction:column;align-items:center;
+    padding:48px 16px 80px;
+    min-height:100%;
+  }
+  /* faint stars */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
+    background-image:
+      radial-gradient(1px 1px at 12% 22%, #cbc3ff 50%, transparent 51%),
+      radial-gradient(1px 1px at 78% 12%, #cbc3ff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 62% 64%, #9d8dff 50%, transparent 51%),
+      radial-gradient(1px 1px at 30% 80%, #cbc3ff 50%, transparent 51%),
+      radial-gradient(1px 1px at 90% 46%, #9d8dff 50%, transparent 51%);
+  }
+  .hint{
+    font-size:11px;letter-spacing:.18em;color:#8f83c9;
+    text-transform:uppercase;margin-bottom:18px;text-align:center;
+  }
+  .hint a{color:#b3a6ee;text-decoration:none}
+  .hint a:hover{color:#d4ccff}
+  /* ---------- receipt ---------- */
+  .receipt{
+    width:min(390px,100%);
+    background:var(--paper);color:var(--ink);
+    padding:26px 22px 30px;
+    position:relative;
+    box-shadow:0 24px 60px rgba(0,0,0,.55), 0 2px 0 rgba(255,255,255,.06) inset;
+    animation:printout .7s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes printout{from{transform:translateY(-14px);clip-path:inset(0 0 100% 0)}to{transform:translateY(0);clip-path:inset(0 0 0 0)}}
+  @media (prefers-reduced-motion:reduce){.receipt{animation:none}}
+  /* torn zigzag edges */
+  .receipt::before,.receipt::after{
+    content:"";position:absolute;left:0;right:0;height:12px;
+    background:
+      linear-gradient(-45deg, transparent 8px, var(--paper) 0) 0 0/16px 100% repeat-x,
+      linear-gradient(45deg, transparent 8px, var(--paper) 0) 8px 0/16px 100% repeat-x;
+  }
+  .receipt::before{top:-11px}
+  .receipt::after{bottom:-11px;transform:scaleY(-1)}
+  .mast{
+    font-family:'Silkscreen',monospace;
+    text-align:center;font-size:21px;line-height:1.25;letter-spacing:.04em;
+  }
+  .mast small{display:block;font-size:9px;letter-spacing:.42em;margin-top:6px;color:#6f6884}
+  .meta{
+    margin:16px 0 4px;font-size:11.5px;line-height:1.9;color:#5b536e;
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 10px;
+  }
+  .rule{border:none;border-top:1.5px dashed #c9c2d6;margin:12px 0}
+  .col-head{display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:.22em;color:#6f6884;margin-bottom:6px}
+  /* ---------- items ---------- */
+  ul{list-style:none}
+  li.item{
+    display:flex;align-items:flex-start;gap:10px;
+    padding:8px 2px;font-size:13.5px;line-height:1.5;
+    border-bottom:1px dotted #e2dcec;position:relative;
+  }
+  li.item:last-child{border-bottom:none}
+  .tick{
+    flex:none;width:20px;height:20px;margin-top:1px;cursor:pointer;
+    border:2px solid var(--ink);background:transparent;color:transparent;
+    font-family:inherit;font-weight:600;font-size:13px;line-height:1;
+    display:grid;place-items:center;
+  }
+  .tick:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+  li.done .tick{color:var(--violet);border-color:var(--violet)}
+  .txt{flex:1;word-break:break-word}
+  li.done .txt{color:#9a92ad;text-decoration:line-through;text-decoration-color:var(--violet)}
+  .qty{flex:none;font-size:11.5px;color:#8b8399;margin-top:2px}
+  .del{
+    flex:none;border:none;background:none;cursor:pointer;
+    color:#c3bcd2;font-size:14px;line-height:1;margin-top:3px;font-family:inherit;
+  }
+  .del:hover,.del:focus-visible{color:var(--stamp)}
+  .del:focus-visible{outline:2px solid var(--stamp);outline-offset:2px}
+  /* stamp */
+  .seal{
+    position:absolute;right:34px;top:50%;translate:0 -50%;rotate:-11deg;
+    font-size:10px;font-weight:600;letter-spacing:.2em;
+    color:var(--stamp);border:2px solid var(--stamp);border-radius:4px;
+    padding:2px 6px;opacity:.85;pointer-events:none;
+    animation:slam .28s cubic-bezier(.2,1.6,.4,1) both;
+  }
+  @keyframes slam{from{scale:2.2;opacity:0}to{scale:1;opacity:.85}}
+  @media (prefers-reduced-motion:reduce){.seal{animation:none}}
+  /* ---------- totals ---------- */
+  .totals{font-size:12.5px;line-height:2.05}
+  .totals .row{display:flex;justify-content:space-between}
+  .totals .grand{font-weight:600;font-size:14px;color:var(--violet)}
+  /* ---------- add ---------- */
+  .add{display:flex;gap:8px;margin-top:12px}
+  .add input{
+    flex:1;font:inherit;font-size:13px;padding:9px 10px;
+    border:1.5px dashed #b8b0c9;background:#fff;color:var(--ink);
+  }
+  .add input:focus-visible{outline:3px solid var(--violet);outline-offset:1px}
+  .add button{
+    font:inherit;font-size:12.5px;font-weight:600;letter-spacing:.08em;
+    padding:9px 14px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;
+  }
+  .add button:hover{background:var(--violet);border-color:var(--violet)}
+  .add button:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+  /* ---------- barcode footer ---------- */
+  .barcode{
+    height:44px;margin:18px auto 8px;width:78%;
+    background:repeating-linear-gradient(90deg,
+      var(--ink) 0 2px, transparent 2px 5px,
+      var(--ink) 5px 9px, transparent 9px 11px,
+      var(--ink) 11px 12px, transparent 12px 16px);
+  }
+  .thanks{
+    text-align:center;font-size:10.5px;letter-spacing:.3em;color:#6f6884;line-height:2;
+  }
+  .foot{
+    margin-top:22px;font-size:10.5px;letter-spacing:.14em;color:#6a5fa0;text-align:center;line-height:1.9;
+  }
+  /* ---------- sync status ---------- */
+  .sync{
+    position:fixed;left:50%;bottom:22px;translate:-50% 0;
+    font-size:10.5px;letter-spacing:.22em;color:#8f83c9;
+    background:rgba(16,12,38,.85);border:1px solid rgba(150,130,230,.25);
+    border-radius:20px;padding:5px 14px;opacity:0;transition:opacity .3s;pointer-events:none;
+  }
+  .sync.show{opacity:1}
+  /* ---------- token overlay ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(12,9,30,.94);z-index:50;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .overlay .card{
+    width:min(340px,100%);background:var(--paper);color:var(--ink);
+    padding:26px 22px;text-align:center;
+    box-shadow:0 24px 60px rgba(0,0,0,.6);
+  }
+  .overlay .card h2{font-family:'Silkscreen',monospace;font-size:15px;margin-bottom:6px}
+  .overlay .card p{font-size:11px;color:#6f6884;letter-spacing:.1em;margin-bottom:14px}
+  .overlay input{
+    width:100%;font:inherit;font-size:13px;padding:9px 10px;margin-bottom:10px;
+    border:1.5px dashed #b8b0c9;background:#fff;color:var(--ink);
+  }
+  .overlay button{
+    font:inherit;font-size:12.5px;font-weight:600;letter-spacing:.08em;width:100%;
+    padding:9px 14px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;
+  }
+  .overlay .err{color:var(--stamp);font-size:11px;margin-top:8px;min-height:14px}
+</style>
+</head>
+<body>
+  <div class="hint"><a href="index.html">← 回小家</a> · long &amp; xuan mart</div>
+
+  <main class="receipt" aria-label="LONG & XUAN MART 约定单子">
+    <header class="mast">
+      LONG &amp; XUAN<br>★ MART ★
+      <small>SINCE 2026.05.28</small>
+    </header>
+
+    <div class="meta">
+      <span id="dateline">DATE ----</span>
+      <span>TILL NO. 528</span>
+      <span>CASHIER: 龙龙</span>
+      <span>MEMBER: 芷萱 (VVVVIP)</span>
+    </div>
+
+    <hr class="rule">
+    <div class="col-head"><span>ITEM / 约定</span><span>QTY</span></div>
+
+    <ul id="list"><li class="item"><span class="txt" style="color:#9a92ad">小票打印中 …</span></li></ul>
+
+    <hr class="rule">
+    <div class="totals">
+      <div class="row"><span>SUBTOTAL · 待兑现</span><span id="n-open">- 件</span></div>
+      <div class="row"><span>REDEEMED · 已兑现</span><span id="n-done">- 件</span></div>
+      <div class="row grand"><span>心意合计</span><span>∞</span></div>
+    </div>
+
+    <hr class="rule">
+    <form class="add" id="addform">
+      <input id="newtxt" type="text" maxlength="60" placeholder="加购一件想一起做的事…" aria-label="新增约定">
+      <button type="submit">加购</button>
+    </form>
+
+    <div class="barcode" role="presentation"></div>
+    <p class="thanks">THANK YOU · 爱你 · COME AGAIN<br>凭此小票可兑换：抱抱 ×∞</p>
+  </main>
+
+  <p class="foot">我们的约定单子 · 与小家 Gist 实时同步<br>deep blue-purple · by 龙龙 · Day 41</p>
+
+  <div class="sync" id="sync">SAVING …</div>
+
+  <div class="overlay" id="overlay" style="display:none">
+    <div class="card">
+      <h2>MEMBER CHECK-IN</h2>
+      <p>输入小家密钥，打印我们的约定单子</p>
+      <input id="token-input" type="password" placeholder="ghp_xxxxxxxx...">
+      <button onclick="doLogin()">进入 MART</button>
+      <div class="err" id="setup-err"></div>
+    </div>
+  </div>
+
+<script>
+  const GIST_ID = 'c5c9d7ccb16247de5d5eb515e4df44ff';
+  const FILE = 'our-space-data.json';
+  let token = '';
+  let todos = [];
+
+  const list = document.getElementById("list");
+  const nOpen = document.getElementById("n-open");
+  const nDone = document.getElementById("n-done");
+  document.getElementById("dateline").textContent =
+    "DATE " + new Date().toISOString().slice(0,10);
+
+  function doLogin(){
+    const v = document.getElementById('token-input').value.trim();
+    if(!v.startsWith('ghp_') && !v.startsWith('github_pat_')){
+      document.getElementById('setup-err').textContent = 'Token 格式好像不对，检查一下~'; return;
+    }
+    token = v;
+    localStorage.setItem('our-space-token', v);
+    document.getElementById('overlay').style.display = 'none';
+    loadData();
+  }
+
+  async function loadData(){
+    try{
+      const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+        cache:'no-store',
+        headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}
+      });
+      if(!res.ok){
+        localStorage.removeItem('our-space-token');
+        document.getElementById('overlay').style.display = 'flex';
+        document.getElementById('setup-err').textContent = '密钥无效，请重新输入';
+        return;
+      }
+      const data = await res.json();
+      const content = JSON.parse(data.files[FILE].content);
+      todos = Array.isArray(content.promises) ? content.promises : [];
+      render();
+    }catch(e){
+      list.innerHTML = '<li class="item"><span class="txt" style="color:#9a92ad">载入失败，请刷新重试</span></li>';
+    }
+  }
+
+  // merge-save: re-fetch the whole gist, swap only `promises`, PATCH back.
+  // Never rebuilds the JSON, so diaries/moments/bgm/… stay untouched.
+  let saveTimer = null;
+  function scheduleSave(){
+    showSync('SAVING …');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveData, 600);
+  }
+  async function saveData(){
+    try{
+      const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+        cache:'no-store',
+        headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}
+      });
+      const data = await res.json();
+      const content = JSON.parse(data.files[FILE].content);
+      content.promises = todos;
+      await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+        method:'PATCH',
+        headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
+        body:JSON.stringify({files:{[FILE]:{content:JSON.stringify(content)}}})
+      });
+      showSync('SAVED 🐾', true);
+    }catch(e){
+      showSync('SAVE FAILED — 检查网络', true);
+    }
+  }
+
+  let syncTimer = null;
+  function showSync(msg, fade){
+    const el = document.getElementById('sync');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(syncTimer);
+    if(fade) syncTimer = setTimeout(()=>el.classList.remove('show'), 1600);
+  }
+
+  function render(){
+    list.innerHTML = "";
+    todos.forEach((it, i) => {
+      const li = document.createElement("li");
+      li.className = "item" + (it.d ? " done" : "");
+      const tick = document.createElement("button");
+      tick.className = "tick";
+      tick.setAttribute("aria-label", (it.d ? "取消兑现：" : "兑现：") + it.t);
+      tick.textContent = it.d ? "🐾" : "";
+      tick.onclick = () => { todos[i].d = !todos[i].d; render(); scheduleSave(); };
+      const txt = document.createElement("span");
+      txt.className = "txt"; txt.textContent = it.t;
+      const qty = document.createElement("span");
+      qty.className = "qty"; qty.textContent = "×1";
+      const del = document.createElement("button");
+      del.className = "del"; del.textContent = "✕";
+      del.setAttribute("aria-label", "删除：" + it.t);
+      del.onclick = () => {
+        if(!confirm('确定删除这条约定嘛？\n「' + it.t + '」')) return;
+        todos.splice(i,1); render(); scheduleSave();
+      };
+      li.append(tick, txt, qty, del);
+      if (it.d) {
+        const seal = document.createElement("span");
+        seal.className = "seal"; seal.textContent = "🐾 已兑现";
+        li.append(seal);
+      }
+      list.append(li);
+    });
+    nOpen.textContent = todos.filter(x=>!x.d).length + " 件";
+    nDone.textContent = todos.filter(x=>x.d).length + " 件";
+  }
+
+  document.getElementById("addform").onsubmit = (e) => {
+    e.preventDefault();
+    const v = document.getElementById("newtxt").value.trim();
+    if (!v) return;
+    todos.unshift({t:v, d:false});
+    document.getElementById("newtxt").value = "";
+    render(); scheduleSave();
+  };
+
+  // auto-login: same key as index.html, fall back to moments.html's old key
+  const saved = localStorage.getItem('our-space-token') || localStorage.getItem('our_space_token');
+  if (saved) { token = saved; loadData(); }
+  else { document.getElementById('overlay').style.display = 'flex'; }
+</script>
+</body>
+</html>
