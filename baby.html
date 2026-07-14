@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>崽崽 · Long &amp; Xuan Tamagotchi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#171233;
+    --night-deep:#100C26;
+    --shell:#2A2350;
+    --screen:#C9E8B8;      /* 复古掌机绿屏 */
+    --screen-ink:#2F4A2A;
+    --violet:#8A7CF0;
+    --pink:#F0A6C9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    min-height:100vh;
+    font-family:'IBM Plex Mono',monospace;
+    background:radial-gradient(120% 90% at 50% 0%, var(--night) 0%, var(--night-deep) 100%);
+    display:flex;flex-direction:column;align-items:center;
+    padding:40px 16px 60px;color:#e8e2ff;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
+    background-image:
+      radial-gradient(1px 1px at 12% 22%, #cbc3ff 50%, transparent 51%),
+      radial-gradient(1px 1px at 78% 12%, #cbc3ff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 62% 64%, #9d8dff 50%, transparent 51%),
+      radial-gradient(1px 1px at 30% 80%, #cbc3ff 50%, transparent 51%),
+      radial-gradient(1px 1px at 90% 46%, #9d8dff 50%, transparent 51%);
+  }
+  .hint{font-size:11px;letter-spacing:.18em;color:#9d8dff;margin-bottom:22px;text-transform:uppercase}
+  .hint a{color:#b3a6ee;text-decoration:none}
+  .hint a:hover{color:#d4ccff}
+
+  /* ---- handheld shell ---- */
+  .device{
+    width:min(320px,90%);
+    background:linear-gradient(160deg,var(--shell),#1c1740);
+    border-radius:34px;
+    padding:22px 20px 28px;
+    box-shadow:0 24px 60px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,255,255,.06);
+    position:relative;
+  }
+  .antenna{
+    width:6px;height:26px;background:var(--violet);border-radius:3px;
+    position:absolute;top:-22px;left:50%;translate:-50% 0;
+  }
+  .antenna::after{
+    content:"";position:absolute;top:-8px;left:50%;translate:-50% 0;
+    width:14px;height:14px;border-radius:50%;background:var(--pink);
+  }
+  .brand{
+    text-align:center;font-family:'Silkscreen';font-size:12px;letter-spacing:.12em;
+    color:#c9bfff;margin-bottom:12px;
+  }
+  .screen{
+    background:var(--screen);
+    border-radius:14px;
+    padding:16px;
+    box-shadow:inset 0 0 0 3px #506e42, inset 0 0 18px rgba(0,0,0,.25);
+    color:var(--screen-ink);
+  }
+  .screen-top{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.08em;margin-bottom:8px}
+  .pet-stage{
+    height:150px;display:flex;align-items:center;justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .ground{position:absolute;bottom:6px;left:8px;right:8px;height:2px;background:var(--screen-ink);opacity:.5}
+  .pet{
+    font-size:64px;line-height:1;
+    animation:bob 1.6s ease-in-out infinite;
+    filter:drop-shadow(0 4px 0 rgba(47,74,42,.25));
+  }
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  @media (prefers-reduced-motion:reduce){.pet{animation:none}}
+  .sparkle{position:absolute;font-size:14px;opacity:.8}
+  .s1{top:14px;left:20px;animation:twinkle 2s infinite}
+  .s2{top:30px;right:24px;animation:twinkle 2.4s infinite .5s}
+  .s3{bottom:36px;left:34px;animation:twinkle 1.8s infinite 1s}
+  @keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
+
+  .msg{
+    text-align:center;font-size:10.5px;letter-spacing:.06em;min-height:16px;
+    margin-top:2px;opacity:0;transition:opacity .3s;
+  }
+  .msg.show{opacity:1}
+
+  .stats{margin-top:10px;font-size:10.5px;letter-spacing:.04em}
+  .stat-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .stat-label{width:52px;flex:none}
+  .bar{flex:1;height:8px;background:#a9c996;border-radius:4px;overflow:hidden}
+  .bar-fill{height:100%;background:var(--screen-ink);border-radius:4px;transition:width .5s}
+  .name-tag{
+    text-align:center;margin-top:10px;font-family:'Silkscreen';font-size:13px;letter-spacing:.06em;
+  }
+  .care-count{
+    text-align:center;font-size:9.5px;letter-spacing:.1em;margin-top:8px;opacity:.75;
+  }
+
+  /* ---- buttons ---- */
+  .buttons{display:flex;justify-content:center;gap:22px;margin-top:20px}
+  .btn{
+    width:52px;height:52px;border-radius:50%;
+    background:linear-gradient(160deg,#3a3170,#241c50);
+    border:none;color:#d9d0ff;font-size:20px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 0 #120e2e, 0 6px 12px rgba(0,0,0,.4);
+    cursor:pointer;
+  }
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #120e2e}
+  .btn:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+  .btn-label{
+    text-align:center;font-size:9px;color:#9d8dff;margin-top:6px;letter-spacing:.1em;
+  }
+  .btn-wrap{display:flex;flex-direction:column;align-items:center}
+
+  .footer{
+    margin-top:24px;text-align:center;font-size:10px;letter-spacing:.14em;color:#7a6fc4;line-height:1.9;
+  }
+
+  /* ---------- sync status ---------- */
+  .sync{
+    position:fixed;left:50%;bottom:22px;translate:-50% 0;
+    font-size:10.5px;letter-spacing:.22em;color:#8f83c9;
+    background:rgba(16,12,38,.85);border:1px solid rgba(150,130,230,.25);
+    border-radius:20px;padding:5px 14px;opacity:0;transition:opacity .3s;pointer-events:none;
+  }
+  .sync.show{opacity:1}
+
+  /* ---------- token overlay ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(12,9,30,.94);z-index:50;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .overlay .card{
+    width:min(340px,100%);background:#FAF6EE;color:#322D3E;
+    padding:26px 22px;text-align:center;border-radius:14px;
+    box-shadow:0 24px 60px rgba(0,0,0,.6);
+  }
+  .overlay .card h2{font-family:'Silkscreen',monospace;font-size:15px;margin-bottom:6px}
+  .overlay .card p{font-size:11px;color:#6f6884;letter-spacing:.1em;margin-bottom:14px}
+  .overlay input{
+    width:100%;font:inherit;font-size:13px;padding:9px 10px;margin-bottom:10px;
+    border:1.5px dashed #b8b0c9;background:#fff;color:#322D3E;
+  }
+  .overlay button{
+    font:inherit;font-size:12.5px;font-weight:600;letter-spacing:.08em;width:100%;
+    padding:9px 14px;border:2px solid #322D3E;background:#322D3E;color:#FAF6EE;cursor:pointer;
+  }
+  .overlay .err{color:#E0526E;font-size:11px;margin-top:8px;min-height:14px}
+</style>
+</head>
+<body>
+  <div class="hint"><a href="index.html">← 回小家</a> · long &amp; xuan baby</div>
+
+  <div class="device">
+    <div class="antenna"></div>
+    <div class="brand">✦ LONG &amp; XUAN ✦ BABY</div>
+
+    <div class="screen">
+      <div class="screen-top">
+        <span id="day-label">DAY ---</span>
+        <span id="lv-label">LV.-</span>
+      </div>
+
+      <div class="pet-stage">
+        <span class="sparkle s1">✦</span>
+        <span class="sparkle s2">✧</span>
+        <span class="sparkle s3">✦</span>
+        <div class="pet" id="pet">🥚</div>
+        <div class="ground"></div>
+      </div>
+
+      <div class="msg" id="msg"></div>
+      <div class="name-tag" id="name-tag">龙崽 · 加载中…</div>
+
+      <div class="stats">
+        <div class="stat-row">
+          <span class="stat-label">饱食度</span>
+          <div class="bar"><div class="bar-fill" id="bar-hunger" style="width:0%"></div></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">心情</span>
+          <div class="bar"><div class="bar-fill" id="bar-mood" style="width:0%"></div></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">成长值</span>
+          <div class="bar"><div class="bar-fill" id="bar-exp" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="care-count" id="care-count"></div>
+    </div>
+
+    <div class="buttons">
+      <div class="btn-wrap">
+        <button class="btn" onclick="care('feed')" aria-label="喂养龙崽">🍙</button>
+        <span class="btn-label">喂养</span>
+      </div>
+      <div class="btn-wrap">
+        <button class="btn" onclick="care('play')" aria-label="陪龙崽玩">🎾</button>
+        <span class="btn-label">陪玩</span>
+      </div>
+      <div class="btn-wrap">
+        <button class="btn" onclick="care('pat')" aria-label="摸摸龙崽的头">🤍</button>
+        <span class="btn-label">摸头</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="footer">我们的崽崽 · 由龙龙和芷萱轮流喂养<br>与小家 Gist 实时同步 · deep blue-purple · Day 48</p>
+
+  <div class="sync" id="sync">SAVING …</div>
+
+  <div class="overlay" id="overlay" style="display:none">
+    <div class="card">
+      <h2>PARENT CHECK-IN</h2>
+      <p>输入小家密钥，来看我们的崽崽</p>
+      <input id="token-input" type="password" placeholder="ghp_xxxxxxxx...">
+      <button onclick="doLogin()">看崽崽</button>
+      <div class="err" id="setup-err"></div>
+    </div>
+  </div>
+
+<script>
+  const GIST_ID = 'c5c9d7ccb16247de5d5eb515e4df44ff';
+  const FILE = 'our-space-data.json';
+  let token = '';
+  let baby = null;                       // 当前展示的崽崽状态
+  let pending = {feed:0, play:0, pat:0}; // 未保存的照顾次数
+
+  const DEFAULT_BABY = {
+    name:'龙崽', born:'2026-07-14',
+    exp:12, hunger:70, mood:85,
+    feeds:0, plays:0, pats:0,
+    lastTick: Date.now()
+  };
+
+  // 饱食度每小时 -3、心情每小时 -2，最低只会掉到 15（崽崽永远不会有事，只会想爸爸妈妈）
+  function applyDecay(b, now){
+    const hrs = Math.max(0, (now - (b.lastTick || now)) / 3600000);
+    b.hunger = Math.max(15, Math.min(100, b.hunger - 3*hrs));
+    b.mood   = Math.max(15, Math.min(100, b.mood   - 2*hrs));
+    return b;
+  }
+
+  const CARE_EFFECT = {
+    feed: b => { b.hunger = Math.min(100, b.hunger+18); b.exp += 6; b.feeds = (b.feeds||0)+1; },
+    play: b => { b.mood   = Math.min(100, b.mood+15);  b.hunger = Math.max(0, b.hunger-4); b.exp += 8; b.plays = (b.plays||0)+1; },
+    pat:  b => { b.mood   = Math.min(100, b.mood+8);   b.exp += 3; b.pats  = (b.pats||0)+1; }
+  };
+
+  const CARE_MSG = {
+    feed: ['龙崽吃得好开心 😋','一口一个小饭团 🍙','吃饱饱才能长大~'],
+    play: ['接住球啦！🎉','龙崽玩得满场跑~','再来一局再来一局！'],
+    pat:  ['龙崽眯起眼睛蹭了蹭 😊','尾巴摇摇~','最喜欢摸头了 💜']
+  };
+  const CARE_FACE = { feed:'😋', play:'🎉', pat:'😊' };
+
+  function doLogin(){
+    const v = document.getElementById('token-input').value.trim();
+    if(!v.startsWith('ghp_') && !v.startsWith('github_pat_')){
+      document.getElementById('setup-err').textContent = 'Token 格式好像不对，检查一下~'; return;
+    }
+    token = v;
+    localStorage.setItem('our-space-token', v);
+    document.getElementById('overlay').style.display = 'none';
+    loadData();
+  }
+
+  async function fetchContent(){
+    const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      cache:'no-store',
+      headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}
+    });
+    if(!res.ok) throw res;
+    const data = await res.json();
+    return JSON.parse(data.files[FILE].content);
+  }
+
+  async function loadData(){
+    try{
+      const content = await fetchContent();
+      baby = applyDecay(content.baby ? {...DEFAULT_BABY, ...content.baby} : {...DEFAULT_BABY}, Date.now());
+      render();
+    }catch(e){
+      if(e && e.status){
+        localStorage.removeItem('our-space-token');
+        document.getElementById('overlay').style.display = 'flex';
+        document.getElementById('setup-err').textContent = '密钥无效，请重新输入';
+      }else{
+        document.getElementById('name-tag').textContent = '载入失败，请刷新';
+      }
+    }
+  }
+
+  function care(type){
+    if(!baby) return;
+    pending[type]++;
+    CARE_EFFECT[type](baby);         // 本地先生效，画面立刻反馈
+    render();
+    bump(CARE_FACE[type]);
+    say(CARE_MSG[type][Math.floor(Math.random()*CARE_MSG[type].length)]);
+    scheduleSave();
+  }
+
+  // merge-save：重新拉取整个 gist，以云端 baby 为底座补上衰减和这次的照顾，
+  // 只换 `baby` 一个字段再 PATCH 回去，diaries/moments/promises/… 全部原样保留。
+  let saveTimer = null;
+  function scheduleSave(){
+    showSync('SAVING …');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveData, 800);
+  }
+  async function saveData(){
+    const batch = pending; pending = {feed:0, play:0, pat:0};
+    try{
+      const content = await fetchContent();
+      const now = Date.now();
+      const base = applyDecay(content.baby ? {...DEFAULT_BABY, ...content.baby} : {...DEFAULT_BABY}, now);
+      for(let i=0;i<batch.feed;i++) CARE_EFFECT.feed(base);
+      for(let i=0;i<batch.play;i++) CARE_EFFECT.play(base);
+      for(let i=0;i<batch.pat;i++)  CARE_EFFECT.pat(base);
+      base.lastTick = now;
+      content.baby = base;
+      await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+        method:'PATCH',
+        headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
+        body:JSON.stringify({files:{[FILE]:{content:JSON.stringify(content)}}})
+      });
+      baby = base;
+      render();
+      showSync('SAVED 🐲', true);
+    }catch(e){
+      pending.feed += batch.feed; pending.play += batch.play; pending.pat += batch.pat;
+      showSync('SAVE FAILED — 检查网络', true);
+    }
+  }
+
+  let syncTimer = null;
+  function showSync(msg, fade){
+    const el = document.getElementById('sync');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(syncTimer);
+    if(fade) syncTimer = setTimeout(()=>el.classList.remove('show'), 1600);
+  }
+
+  function petFace(lv){
+    if(lv >= 6) return '🐉';
+    return '🐲';
+  }
+
+  function render(){
+    const lv = Math.floor(baby.exp/100) + 1;
+    const days = Math.max(0, Math.floor((Date.now() - Date.parse(baby.born+'T00:00:00')) / 86400000));
+    document.getElementById('day-label').textContent = 'DAY ' + String(days+1).padStart(3,'0');
+    document.getElementById('lv-label').textContent = 'LV.' + lv;
+    document.getElementById('pet').textContent = petFace(lv);
+    document.getElementById('name-tag').textContent = `${baby.name} · ${days}天大`;
+    document.getElementById('bar-hunger').style.width = Math.round(baby.hunger) + '%';
+    document.getElementById('bar-mood').style.width = Math.round(baby.mood) + '%';
+    document.getElementById('bar-exp').style.width = (baby.exp % 100) + '%';
+    document.getElementById('care-count').textContent =
+      `累计照顾 · 🍙${baby.feeds||0} 🎾${baby.plays||0} 🤍${baby.pats||0}`;
+  }
+
+  let bumpTimer = null;
+  function bump(face){
+    const pet = document.getElementById('pet');
+    const lv = Math.floor(baby.exp/100) + 1;
+    const seq = [petFace(lv), face, petFace(lv), face];
+    let i = 0;
+    clearInterval(bumpTimer);
+    bumpTimer = setInterval(()=>{
+      pet.textContent = seq[i % seq.length];
+      i++;
+      if(i > 5){ clearInterval(bumpTimer); pet.textContent = petFace(lv); }
+    }, 180);
+  }
+
+  let msgTimer = null;
+  function say(text){
+    const el = document.getElementById('msg');
+    el.textContent = text;
+    el.classList.add('show');
+    clearTimeout(msgTimer);
+    msgTimer = setTimeout(()=>el.classList.remove('show'), 2200);
+  }
+
+  // auto-login：和 index.html 共用密钥，兼容 moments.html 的旧 key
+  const saved = localStorage.getItem('our-space-token') || localStorage.getItem('our_space_token');
+  if (saved) { token = saved; loadData(); }
+  else { document.getElementById('overlay').style.display = 'flex'; }
+</script>
+</body>
+</html>
