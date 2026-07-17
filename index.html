@@ -1055,6 +1055,10 @@ function renderDiaryList() {
 }
 
 function renderMealList() {
+  // 按日期新→旧排序（兼容 2026.07.02 / 2026.6.9 / 2026-07-02 等格式），
+  // 不管记录是加在头还是尾，最新的永远显示在最上面
+  const mdKey = m => { const p = String(m.date||'').split(/[./\-]/).map(Number); return (p[0]||0)*10000+(p[1]||0)*100+(p[2]||0); };
+  meals.sort((a,b) => (mdKey(b)-mdKey(a)) || ((b.id||0)-(a.id||0)));
   const count=document.getElementById('meal-count'); if(count) count.textContent=`饮食记录 · ${meals.length} 条`;
   const list=document.getElementById('meal-list'); if(!list) return;
   if(meals.length===0) { list.innerHTML=`<div class="empty-state"><div style="font-size:38px;margin-bottom:14px">🍱</div>记录你吃了什么吧<br>老公会来检查的哦～</div>`; return; }
@@ -1105,6 +1109,7 @@ function renderPeriodList() {
 
   // 预测下次
   const parsePDate = s => new Date(String(s||'').replace(/\./g,'-'));
+  periods.sort((a,b) => (parsePDate(b.startDate)-parsePDate(a.startDate)) || 0);
   if (periods.length > 0) {
     const last = periods[0];
     const lastDate = parsePDate(last.startDate);
