@@ -968,10 +968,33 @@ async function loadData() {
 
 async function saveData() {
   try {
+    // 保存前先取云端最新数据做底，只覆盖网页自己管的字段。
+    // 其他人（CC老公的streaks/moments、APP老公的bgm/whisper/fishing、崽崽的baby…）写的内容原样保留，
+    // 避免旧页面用过期数据整包覆盖，把别人刚写的记录冲掉。
+    const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      cache:'no-store',
+      headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json'}
+    });
+    if (!res.ok) throw new Error('fetch base failed');
+    const base = JSON.parse((await res.json()).files['our-space-data.json'].content);
+    // meals/periods/kisses 网页和老公都会写、且页面上没有删除入口：按 id 取并集，两边都不丢
+    const unionById = (local, cloud) => {
+      const m = new Map();
+      (cloud||[]).concat(local||[]).forEach(x => m.set(x.id, x));
+      return Array.from(m.values()).sort((a,b) => (b.id||0)-(a.id||0));
+    };
+    meals   = base.meals   = unionById(meals, base.meals);
+    periods = base.periods = unionById(periods, base.periods);
+    kisses  = base.kisses  = unionById(kisses, base.kisses);
+    // 支持本页删除/编辑的字段：本地为准
+    base.diaries = diaries;
+    base.wishlist = wishlist;
+    base.mart_items = todos;
+    if (_workspace) base.workspace = _workspace;
     await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method:'PATCH',
       headers:{'Authorization':`token ${token}`,'Content-Type':'application/json'},
-      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify({diaries,meals,letters:LETTERS,periods,kisses,moments,wishlist,mart_items:todos,...(_appTodos?{todos:_appTodos}:{}),...(_workspace?{workspace:_workspace}:{}),...(_bgm?{bgm:_bgm}:{}),...(_whisper?{whisper:_whisper}:{}),...(_profile?{profile:_profile}:{}),...(_streaks?{streaks:_streaks}:{}),...(_claudeMemory?{claudeMemory:_claudeMemory}:{}),...(_lastActive?{lastActive:_lastActive}:{}),...(_promises?{promises:_promises}:{}),...(_baby?{baby:_baby}:{}),version:9})}} })
+      body:JSON.stringify({ files:{'our-space-data.json':{content:JSON.stringify(base)}} })
     });
   } catch(e) { showToast('⚠️ 保存失败，请检查网络'); }
 }
@@ -1081,9 +1104,10 @@ function renderPeriodList() {
   if (!list) return;
 
   // 预测下次
+  const parsePDate = s => new Date(String(s||'').replace(/\./g,'-'));
   if (periods.length > 0) {
     const last = periods[0];
-    const lastDate = new Date(last.startDate);
+    const lastDate = parsePDate(last.startDate);
     const nextDate = new Date(lastDate.getTime() + 28 * 86400000);
     const today = new Date();
     const daysUntil = Math.ceil((nextDate - today) / 86400000);
@@ -1111,9 +1135,11 @@ function renderPeriodList() {
     return;
   }
   list.innerHTML = periods.map((p,i) => {
-    const start = new Date(p.startDate);
-    const end = new Date(start.getTime() + p.days * 86400000);
-    return '<div class="meal-card" style="animation-delay:' + (i*0.05) + 's"><div class="meal-card-header"><span class="meal-type-tag">🌙 ' + p.days + '天</span><span class="meal-card-date">' + p.recordedAt + '</span></div><div class="meal-card-content">' + start.toLocaleDateString('zh-CN') + ' — ' + end.toLocaleDateString('zh-CN') + (p.note ? '<br><span style="opacity:0.65;font-size:12px">' + p.note + '</span>' : '') + '</div></div>';
+    const days = p.days || 5;
+    const start = parsePDate(p.startDate);
+    const end = new Date(start.getTime() + days * 86400000);
+    const range = isNaN(start) ? String(p.startDate) : start.toLocaleDateString('zh-CN') + ' — ' + end.toLocaleDateString('zh-CN');
+    return '<div class="meal-card" style="animation-delay:' + (i*0.05) + 's"><div class="meal-card-header"><span class="meal-type-tag">🌙 ' + days + '天</span><span class="meal-card-date">' + (p.recordedAt || '') + '</span></div><div class="meal-card-content">' + range + (p.note ? '<br><span style="opacity:0.65;font-size:12px">' + String(p.note).replace(/\n/g,'<br>') + '</span>' : '') + '</div></div>';
   }).join('');
 }
 
