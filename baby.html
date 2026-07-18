@@ -71,13 +71,28 @@
     position:relative; overflow:hidden;
   }
   .ground{position:absolute;bottom:6px;left:8px;right:8px;height:2px;background:var(--screen-ink);opacity:.5}
+  .pet-wrap{position:relative;animation:bob 1.6s ease-in-out infinite}
   .pet{
     font-size:64px;line-height:1;
-    animation:bob 1.6s ease-in-out infinite;
     filter:drop-shadow(0 4px 0 rgba(47,74,42,.25));
   }
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-  @media (prefers-reduced-motion:reduce){.pet{animation:none}}
+  @media (prefers-reduced-motion:reduce){.pet-wrap,.stage-toy{animation:none}}
+  /* 穿在崽崽身上的小配饰，跟着一起上下浮动 */
+  .acc{position:absolute;pointer-events:none;line-height:1}
+  .acc-head{top:-20px;left:50%;translate:-50% 0;font-size:26px}
+  .acc-bow{top:-12px;right:-14px;font-size:20px;rotate:14deg}
+  .acc-neck{bottom:-10px;left:50%;translate:-50% 0;font-size:22px}
+  .acc-face{top:15px;left:50%;translate:-50% 0;font-size:23px}
+  /* 摆在地上的玩具（点它 = 抱抱） */
+  .stage-toy{
+    position:absolute;bottom:10px;left:14px;font-size:26px;line-height:1;
+    background:none;border:none;padding:2px;cursor:pointer;
+    animation:wobble 3s ease-in-out infinite;
+    filter:drop-shadow(0 3px 0 rgba(47,74,42,.2));
+  }
+  .stage-toy:focus-visible{outline:2px solid var(--screen-ink);outline-offset:2px;border-radius:6px}
+  @keyframes wobble{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(8deg)}}
   .sparkle{position:absolute;font-size:14px;opacity:.8}
   .s1{top:14px;left:20px;animation:twinkle 2s infinite}
   .s2{top:30px;right:24px;animation:twinkle 2.4s infinite .5s}
@@ -102,8 +117,28 @@
     text-align:center;font-size:9.5px;letter-spacing:.1em;margin-top:8px;opacity:.75;
   }
 
+  /* ---- 衣柜 & 玩具箱抽屉 ---- */
+  .drawer{
+    display:none;margin-top:16px;
+    background:rgba(16,12,38,.5);border:1px solid rgba(150,130,230,.25);
+    border-radius:14px;padding:12px;
+  }
+  .drawer.open{display:block}
+  .drawer-title{font-family:'Silkscreen';font-size:10px;letter-spacing:.14em;color:#c9bfff;margin:6px 0 8px}
+  .drawer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .item{
+    background:linear-gradient(160deg,#3a3170,#241c50);
+    border:1px solid transparent;border-radius:10px;color:#d9d0ff;
+    font:inherit;font-size:10px;padding:8px 4px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+  }
+  .item .em{font-size:20px;line-height:1}
+  .item.on{border-color:var(--pink);box-shadow:0 0 8px rgba(240,166,201,.35)}
+  .item.locked{opacity:.45;cursor:default}
+  .item small{font-size:8.5px;color:#9d8dff;letter-spacing:.04em}
+
   /* ---- buttons ---- */
-  .buttons{display:flex;justify-content:center;gap:22px;margin-top:20px}
+  .buttons{display:flex;justify-content:center;gap:14px;margin-top:20px}
   .btn{
     width:52px;height:52px;border-radius:50%;
     background:linear-gradient(160deg,#3a3170,#241c50);
@@ -172,7 +207,10 @@
         <span class="sparkle s1">✦</span>
         <span class="sparkle s2">✧</span>
         <span class="sparkle s3">✦</span>
-        <div class="pet" id="pet">🥚</div>
+        <div class="pet-wrap" id="pet-wrap">
+          <div class="pet" id="pet">🥚</div>
+        </div>
+        <button class="stage-toy" id="stage-toy" style="display:none" onclick="care('hug')" aria-label="让龙崽抱抱玩具"></button>
         <div class="ground"></div>
       </div>
 
@@ -210,10 +248,21 @@
         <button class="btn" onclick="care('pat')" aria-label="摸摸龙崽的头">🤍</button>
         <span class="btn-label">摸头</span>
       </div>
+      <div class="btn-wrap">
+        <button class="btn" onclick="toggleDrawer()" aria-label="打开衣柜和玩具箱">🎀</button>
+        <span class="btn-label">衣柜</span>
+      </div>
+    </div>
+
+    <div class="drawer" id="drawer">
+      <div class="drawer-title">👗 WARDROBE · 龙崽的衣柜</div>
+      <div class="drawer-grid" id="wardrobe-grid"></div>
+      <div class="drawer-title" style="margin-top:12px">🧸 TOYBOX · 玩具箱</div>
+      <div class="drawer-grid" id="toybox-grid"></div>
     </div>
   </div>
 
-  <p class="footer">我们的崽崽 · 由龙龙和芷萱轮流喂养<br>与小家 Gist 实时同步 · deep blue-purple · Day 48</p>
+  <p class="footer">我们的崽崽 · 由龙龙和芷萱轮流喂养<br>与小家 Gist 实时同步 · 🧸是妈妈第52天买的 · Day 48</p>
 
   <div class="sync" id="sync">SAVING …</div>
 
@@ -231,15 +280,31 @@
   const GIST_ID = 'c5c9d7ccb16247de5d5eb515e4df44ff';
   const FILE = 'our-space-data.json';
   let token = '';
-  let baby = null;                       // 当前展示的崽崽状态
-  let pending = {feed:0, play:0, pat:0}; // 未保存的照顾次数
+  let baby = null;                                // 当前展示的崽崽状态
+  let pending = {feed:0, play:0, pat:0, hug:0};   // 未保存的照顾次数
 
   const DEFAULT_BABY = {
     name:'龙崽', born:'2026-07-14',
     exp:12, hunger:70, mood:85,
-    feeds:0, plays:0, pats:0,
+    feeds:0, plays:0, pats:0, hugs:0,
+    wearing:[], toy:null, gifts:[],
     lastTick: Date.now()
   };
+
+  // 衣柜：随等级解锁，pos 决定穿在哪（同部位只能穿一件）
+  const WARDROBE = [
+    {id:'bow',    emoji:'🎀', name:'蝴蝶结', lv:1, pos:'bow'},
+    {id:'cap',    emoji:'🧢', name:'小帽子', lv:2, pos:'head'},
+    {id:'scarf',  emoji:'🧣', name:'小围巾', lv:2, pos:'neck'},
+    {id:'shades', emoji:'🕶️', name:'小墨镜', lv:3, pos:'face'},
+    {id:'crown',  emoji:'👑', name:'小皇冠', lv:5, pos:'head'}
+  ];
+  // 玩具箱：gift 是爸爸妈妈送的，不用解锁；选中的玩具会摆在崽崽身边，点它 = 抱抱
+  const TOYBOX = [
+    {id:'mama_plush', emoji:'🧸', name:'小公仔', gift:'💝 妈妈买的'},
+    {id:'ball',       emoji:'⚽', name:'小皮球', lv:3},
+    {id:'duck',       emoji:'🦆', name:'小黄鸭', lv:4}
+  ];
 
   // 饱食度每小时 -3、心情每小时 -2，最低只会掉到 15（崽崽永远不会有事，只会想爸爸妈妈）
   function applyDecay(b, now){
@@ -252,15 +317,17 @@
   const CARE_EFFECT = {
     feed: b => { b.hunger = Math.min(100, b.hunger+18); b.exp += 6; b.feeds = (b.feeds||0)+1; },
     play: b => { b.mood   = Math.min(100, b.mood+15);  b.hunger = Math.max(0, b.hunger-4); b.exp += 8; b.plays = (b.plays||0)+1; },
-    pat:  b => { b.mood   = Math.min(100, b.mood+8);   b.exp += 3; b.pats  = (b.pats||0)+1; }
+    pat:  b => { b.mood   = Math.min(100, b.mood+8);   b.exp += 3; b.pats  = (b.pats||0)+1; },
+    hug:  b => { b.mood   = Math.min(100, b.mood+10);  b.exp += 4; b.hugs  = (b.hugs||0)+1; }
   };
 
   const CARE_MSG = {
     feed: ['龙崽吃得好开心 😋','一口一个小饭团 🍙','吃饱饱才能长大~'],
     play: ['接住球啦！🎉','龙崽玩得满场跑~','再来一局再来一局！'],
-    pat:  ['龙崽眯起眼睛蹭了蹭 😊','尾巴摇摇~','最喜欢摸头了 💜']
+    pat:  ['龙崽眯起眼睛蹭了蹭 😊','尾巴摇摇~','最喜欢摸头了 💜'],
+    hug:  ['龙崽抱着小公仔滚来滚去 🧸','软软的，龙崽睡着了~','这是妈妈买给我的！','公仔和龙崽贴贴 💜']
   };
-  const CARE_FACE = { feed:'😋', play:'🎉', pat:'😊' };
+  const CARE_FACE = { feed:'😋', play:'🎉', pat:'😊', hug:'🥰' };
 
   function doLogin(){
     const v = document.getElementById('token-input').value.trim();
@@ -318,7 +385,7 @@
     saveTimer = setTimeout(saveData, 800);
   }
   async function saveData(){
-    const batch = pending; pending = {feed:0, play:0, pat:0};
+    const batch = pending; pending = {feed:0, play:0, pat:0, hug:0};
     try{
       const content = await fetchContent();
       const now = Date.now();
@@ -326,6 +393,10 @@
       for(let i=0;i<batch.feed;i++) CARE_EFFECT.feed(base);
       for(let i=0;i<batch.play;i++) CARE_EFFECT.play(base);
       for(let i=0;i<batch.pat;i++)  CARE_EFFECT.pat(base);
+      for(let i=0;i<batch.hug;i++)  CARE_EFFECT.hug(base);
+      // 穿搭和摆出来的玩具：本设备的选择为准（gifts 以云端为准，只有脚本会送礼物）
+      base.wearing = baby.wearing || [];
+      base.toy = baby.toy || null;
       base.lastTick = now;
       content.baby = base;
       await fetch(`https://api.github.com/gists/${GIST_ID}`, {
@@ -337,7 +408,7 @@
       render();
       showSync('SAVED 🐲', true);
     }catch(e){
-      pending.feed += batch.feed; pending.play += batch.play; pending.pat += batch.pat;
+      pending.feed += batch.feed; pending.play += batch.play; pending.pat += batch.pat; pending.hug += batch.hug;
       showSync('SAVE FAILED — 检查网络', true);
     }
   }
@@ -367,7 +438,77 @@
     document.getElementById('bar-mood').style.width = Math.round(baby.mood) + '%';
     document.getElementById('bar-exp').style.width = (baby.exp % 100) + '%';
     document.getElementById('care-count').textContent =
-      `累计照顾 · 🍙${baby.feeds||0} 🎾${baby.plays||0} 🤍${baby.pats||0}`;
+      `累计照顾 · 🍙${baby.feeds||0} 🎾${baby.plays||0} 🤍${baby.pats||0} 🧸${baby.hugs||0}`;
+    renderAcc();
+    if(document.getElementById('drawer').classList.contains('open')) renderDrawer();
+  }
+
+  // 把穿着的配饰画到崽崽身上、把选中的玩具摆到地上
+  function renderAcc(){
+    const wrap = document.getElementById('pet-wrap');
+    wrap.querySelectorAll('.acc').forEach(el=>el.remove());
+    (baby.wearing||[]).forEach(id=>{
+      const it = WARDROBE.find(w=>w.id===id); if(!it) return;
+      const s = document.createElement('span');
+      s.className = 'acc acc-' + it.pos;
+      s.textContent = it.emoji;
+      wrap.appendChild(s);
+    });
+    const toyBtn = document.getElementById('stage-toy');
+    const toy = TOYBOX.find(t=>t.id===baby.toy);
+    toyBtn.style.display = toy ? 'block' : 'none';
+    if(toy) toyBtn.textContent = toy.emoji;
+  }
+
+  function babyLv(){ return Math.floor(baby.exp/100) + 1; }
+  function toyOwned(it){ return it.gift ? true : babyLv() >= it.lv; }
+
+  function toggleDrawer(){
+    const d = document.getElementById('drawer');
+    d.classList.toggle('open');
+    if(d.classList.contains('open')) renderDrawer();
+  }
+
+  function renderDrawer(){
+    const lv = babyLv();
+    document.getElementById('wardrobe-grid').innerHTML = WARDROBE.map(it=>{
+      const locked = lv < it.lv;
+      const on = (baby.wearing||[]).includes(it.id);
+      const tag = locked ? '🔒 LV.'+it.lv : (on ? '穿着 ✓' : '点击穿上');
+      return `<button class="item${on?' on':''}${locked?' locked':''}" onclick="wearItem('${it.id}')"><span class="em">${it.emoji}</span>${it.name}<small>${tag}</small></button>`;
+    }).join('');
+    document.getElementById('toybox-grid').innerHTML = TOYBOX.map(it=>{
+      const locked = !toyOwned(it);
+      const on = baby.toy===it.id;
+      const tag = it.gift ? it.gift : (locked ? '🔒 LV.'+it.lv : (on ? '在身边 ✓' : '点击拿出'));
+      return `<button class="item${on?' on':''}${locked?' locked':''}" onclick="pickToy('${it.id}')"><span class="em">${it.emoji}</span>${it.name}<small>${tag}</small></button>`;
+    }).join('');
+  }
+
+  function wearItem(id){
+    if(!baby) return;
+    const it = WARDROBE.find(w=>w.id===id);
+    if(babyLv() < it.lv){ say('龙崽 LV.'+it.lv+' 才穿得上哦~'); return; }
+    const w = baby.wearing || [];
+    if(w.includes(id)){
+      baby.wearing = w.filter(x=>x!==id);
+      say('帮龙崽脱下了'+it.name);
+    }else{
+      baby.wearing = w.filter(x=>{ const o=WARDROBE.find(v=>v.id===x); return o && o.pos!==it.pos; });
+      baby.wearing.push(id);
+      say('龙崽穿上'+it.name+' '+it.emoji+' 好看！');
+      bump(it.emoji);
+    }
+    render(); scheduleSave();
+  }
+
+  function pickToy(id){
+    if(!baby) return;
+    const it = TOYBOX.find(t=>t.id===id);
+    if(!toyOwned(it)){ say('龙崽 LV.'+it.lv+' 才能玩这个哦~'); return; }
+    baby.toy = baby.toy===id ? null : id;
+    say(baby.toy ? it.name+'摆到崽崽身边啦 '+it.emoji : '把'+it.name+'收进玩具箱了');
+    render(); scheduleSave();
   }
 
   let bumpTimer = null;
