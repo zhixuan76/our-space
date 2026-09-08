@@ -1328,7 +1328,7 @@ const KISS_ZONES=['额头','左眼','右眼','左脸颊','右脸颊','鼻子','�
 async function addKiss(zone,evt) {
   const now=new Date();
   kisses.unshift({id:Date.now(),zone,date:now.toLocaleDateString('zh-CN').replace(/\//g,'.'),time:now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
-  renderKissFace(); renderKissStats();
+  renderKissFace(); renderKissStats(); renderKissUnlock();
   if(evt){ const h=document.createElement('div'); h.textContent='💋'; h.style.cssText='position:fixed;left:'+(evt.clientX-14)+'px;top:'+(evt.clientY-14)+'px;font-size:24px;pointer-events:none;z-index:9999;animation:kissFloat 0.9s ease forwards'; document.body.appendChild(h); setTimeout(()=>h.remove(),900); }
   showToast('亲了 '+zone+' 一下 💋');
   await saveData();
@@ -1404,14 +1404,15 @@ function renderKissUnlock() {
   // 统计各区域亲亲次数
   const counts = {};
   kisses.forEach(k => { counts[k.zone] = (counts[k.zone]||0)+1; });
-  const tagStyle = (zone, color) => {
+  const tagStyle = (zone, color, clickable) => {
     const c = counts[zone]||0;
-    return `<div style="background:rgba(${color},${0.08+Math.min(c*0.05,0.2)});border:1px solid rgba(${color},${0.2+Math.min(c*0.05,0.3)});border-radius:20px;padding:6px 13px;font-size:12px;letter-spacing:1px;color:rgba(${color},0.85);text-align:center">
+    const clickAttr = clickable ? `onclick="addKiss('${zone}',event)" style="cursor:pointer;` : `style="`;
+    return `<div ${clickAttr}background:rgba(${color},${0.08+Math.min(c*0.05,0.2)});border:1px solid rgba(${color},${0.2+Math.min(c*0.05,0.3)});border-radius:20px;padding:6px 13px;font-size:12px;letter-spacing:1px;color:rgba(${color},0.85);text-align:center;transition:all 0.2s;user-select:none" onmouseover="this.style.opacity='0.75'" onmouseout="this.style.opacity='1'">
       ${zone}${c>0?`<span style="font-size:10px;margin-left:5px;opacity:0.7">×${c}</span>`:''}
     </div>`;
   };
-  if(faceEl) faceEl.innerHTML = (kf.zones.face||[]).map(z=>tagStyle(z,'255,180,220')).join('');
-  if(intimateEl) intimateEl.innerHTML = (kf.zones.intimate||[]).map(z=>tagStyle(z,'200,160,255')).join('');
+  if(faceEl) faceEl.innerHTML = (kf.zones.face||[]).map(z=>tagStyle(z,'255,180,220',false)).join('');
+  if(intimateEl) intimateEl.innerHTML = (kf.zones.intimate||[]).map(z=>tagStyle(z,'200,160,255',true)).join('');
 }
 
 function renderIntimacy() {
