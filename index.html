@@ -863,6 +863,7 @@ let periods = [];
 let kisses = [];
 let _kissFeature = null;
 let _intimacy = null;
+let _intimacyCalYear = 0, _intimacyCalMonth = 0;
 let moments = [];
 let _bgm = null;
 let _whisper = null;
@@ -1417,24 +1418,89 @@ function renderKissUnlock() {
 
 function renderIntimacy() {
   const section = document.getElementById('intimacy-section');
-  const listEl = document.getElementById('intimacy-list');
-  const badge = document.getElementById('intimacy-stats-badge');
   if (!section || !_intimacy) return;
   section.style.display = 'block';
   const records = _intimacy.records || [];
   const stats = _intimacy.stats || {};
+  const badge = document.getElementById('intimacy-stats-badge');
   if(badge) badge.textContent = `共 ${stats.totalDays||0} 次 · ${stats.totalCount||0} 轮`;
-  if(!listEl) return;
-  if(records.length===0){ listEl.innerHTML='<div style="text-align:center;color:rgba(200,160,255,0.35);font-size:12px;letter-spacing:2px;padding:20px 0">暂无记录</div>'; return; }
-  listEl.innerHTML = records.map(r => {
-    const countStr = r.count>0 ? `${r.count}轮` : (r.type==='mutual'?'互相':'特别');
-    const initiatorBadge = r.initiator ? `<span style="background:rgba(200,160,255,0.12);border:1px solid rgba(200,160,255,0.2);border-radius:8px;padding:1px 7px;font-size:10px;color:rgba(200,160,255,0.7);margin-left:6px">${r.initiator}主动</span>` : '';
-    return `<div style="padding:12px 0;border-bottom:1px solid rgba(200,150,255,0.08)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-        <div style="color:rgba(230,210,255,0.8);font-size:13px">🌙 ${r.date} · 第${r.day}天 ${initiatorBadge}</div>
-        <div style="color:rgba(200,160,255,0.7);font-size:12px;font-weight:bold">${countStr}</div>
+  // 初始化月份：跳到最近一条记录的月份
+  if (_intimacyCalYear === 0 && records.length > 0) {
+    const p = records[0].date.split('.');
+    _intimacyCalYear = parseInt(p[0]);
+    _intimacyCalMonth = parseInt(p[1]) - 1;
+  } else if (_intimacyCalYear === 0) {
+    const now = new Date();
+    _intimacyCalYear = now.getFullYear();
+    _intimacyCalMonth = now.getMonth();
+  }
+  renderIntimacyCal();
+}
+
+function renderIntimacyCal() {
+  const listEl = document.getElementById('intimacy-list');
+  if (!listEl || !_intimacy) return;
+  const records = _intimacy.records || [];
+  const year = _intimacyCalYear, month = _intimacyCalMonth;
+  // 建立日期→记录映射
+  const dateMap = {};
+  records.forEach(r => { if(!dateMap[r.date]) dateMap[r.date]=[]; dateMap[r.date].push(r); });
+  // 日历计算
+  const firstDow = (new Date(year, month, 1).getDay() + 6) % 7; // 周一=0
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const monthNames = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  const today = new Date();
+  let html = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <button onclick="intimacyCalNav(-1)" style="background:rgba(200,160,255,0.1);border:1px solid rgba(200,160,255,0.2);color:rgba(200,160,255,0.8);padding:5px 14px;border-radius:10px;cursor:pointer;font-size:16px;font-family:Georgia,serif;transition:all 0.2s" onmouseover="this.style.background='rgba(200,160,255,0.2)'" onmouseout="this.style.background='rgba(200,160,255,0.1)'">‹</button>
+      <div style="color:rgba(220,190,255,0.85);font-size:13px;letter-spacing:3px">${year} · ${monthNames[month]}</div>
+      <button onclick="intimacyCalNav(1)" style="background:rgba(200,160,255,0.1);border:1px solid rgba(200,160,255,0.2);color:rgba(200,160,255,0.8);padding:5px 14px;border-radius:10px;cursor:pointer;font-size:16px;font-family:Georgia,serif;transition:all 0.2s" onmouseover="this.style.background='rgba(200,160,255,0.2)'" onmouseout="this.style.background='rgba(200,160,255,0.1)'">›</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px">
+      ${['一','二','三','四','五','六','日'].map(d=>`<div style="text-align:center;color:rgba(200,160,255,0.4);font-size:10px;letter-spacing:1px;padding:3px 0">${d}</div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">
+  `;
+  for(let i=0;i<firstDow;i++) html+=`<div></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=`${year}.${String(month+1).padStart(2,'0')}.${String(d).padStart(2,'0')}`;
+    const recs=dateMap[ds];
+    const isToday=today.getFullYear()===year&&today.getMonth()===month&&today.getDate()===d;
+    if(recs){
+      const tot=recs.reduce((s,r)=>s+(r.count||0),0);
+      html+=`<div onclick="showIntimacyDetail('${ds}')" style="text-align:center;padding:5px 2px;border-radius:50%;background:rgba(160,100,255,0.22);border:1px solid rgba(200,160,255,0.45);cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(160,100,255,0.38)'" onmouseout="this.style.background='rgba(160,100,255,0.22)'">
+        <div style="color:rgba(235,210,255,0.95);font-size:12px;font-weight:bold;line-height:1.2">${d}</div>
+        <div style="color:rgba(210,170,255,0.75);font-size:9px;line-height:1">${tot>0?'×'+tot:'🌙'}</div>
+      </div>`;
+    } else {
+      html+=`<div style="text-align:center;padding:5px 2px;border-radius:50%;${isToday?'border:1px solid rgba(200,160,255,0.2);':''};color:rgba(200,170,240,${isToday?'0.65':'0.3'});font-size:12px;line-height:2">${d}</div>`;
+    }
+  }
+  html+=`</div><div id="intimacy-detail" style="margin-top:14px"></div>`;
+  listEl.innerHTML = html;
+}
+
+function intimacyCalNav(delta) {
+  _intimacyCalMonth += delta;
+  if(_intimacyCalMonth<0){_intimacyCalMonth=11;_intimacyCalYear--;}
+  if(_intimacyCalMonth>11){_intimacyCalMonth=0;_intimacyCalYear++;}
+  renderIntimacyCal();
+}
+
+function showIntimacyDetail(dateStr) {
+  const el = document.getElementById('intimacy-detail');
+  if(!el||!_intimacy) return;
+  const recs = (_intimacy.records||[]).filter(r=>r.date===dateStr);
+  if(!recs.length) return;
+  el.innerHTML = recs.map(r=>{
+    const countStr = r.count>0?`${r.count}轮`:(r.type==='mutual'?'互相 💕':r.type==='assisted'?'特别 🌙':'🌙');
+    const badge = r.initiator?`<span style="background:rgba(200,160,255,0.12);border:1px solid rgba(200,160,255,0.2);border-radius:8px;padding:1px 7px;font-size:10px;color:rgba(200,160,255,0.7);margin-left:6px">${r.initiator}主动</span>`:'';
+    return `<div style="background:rgba(160,100,255,0.08);border:1px solid rgba(200,160,255,0.15);border-radius:14px;padding:14px;margin-top:6px;animation:fadeIn 0.3s ease both">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:${r.note?'8':'0'}px">
+        <div style="color:rgba(220,200,255,0.75);font-size:12px;letter-spacing:1px">🌙 第${r.day}天${badge}</div>
+        <div style="color:rgba(210,170,255,0.9);font-size:13px;font-weight:bold">${countStr}</div>
       </div>
-      ${r.note ? `<div style="color:rgba(190,170,240,0.5);font-size:11px;letter-spacing:0.5px;line-height:1.8;font-style:italic">${r.note}</div>` : ''}
+      ${r.note?`<div style="color:rgba(190,165,240,0.55);font-size:11px;letter-spacing:0.5px;line-height:2;font-style:italic">${r.note}</div>`:''}
     </div>`;
   }).join('');
 }
