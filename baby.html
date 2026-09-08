@@ -84,6 +84,8 @@
   .acc-bow{top:-12px;right:-14px;font-size:20px;rotate:14deg}
   .acc-neck{bottom:-10px;left:50%;translate:-50% 0;font-size:22px}
   .acc-face{top:15px;left:50%;translate:-50% 0;font-size:23px}
+  /* LV.6 翅膀配饰 */
+  .acc-wing{top:18px;left:-18px;font-size:26px;rotate:-15deg}
   /* 摆在地上的玩具（点它 = 抱抱） */
   .stage-toy{
     position:absolute;bottom:10px;left:14px;font-size:26px;line-height:1;
@@ -167,6 +169,49 @@
   }
   .sync.show{opacity:1}
 
+  /* ---------- 进化仪式 overlay ---------- */
+  .evo-overlay{
+    position:fixed;inset:0;background:rgba(8,4,28,.96);z-index:60;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+    animation:evo-fade-in .4s ease-out;
+  }
+  @keyframes evo-fade-in{from{opacity:0}to{opacity:1}}
+  .evo-card{
+    width:min(300px,100%);text-align:center;
+    background:linear-gradient(155deg,#2e2060 0%,#1a1240 60%,#0e0a30 100%);
+    border:1px solid rgba(200,160,255,.35);
+    border-radius:22px;padding:28px 20px 24px;
+    box-shadow:0 0 80px rgba(160,100,255,.35),0 24px 60px rgba(0,0,0,.75);
+    animation:evo-appear .55s cubic-bezier(.175,.885,.32,1.275);
+  }
+  @keyframes evo-appear{from{opacity:0;transform:scale(.78) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  .evo-stars{font-size:18px;letter-spacing:10px;display:block;margin-bottom:14px;animation:twinkle 1.6s infinite}
+  .evo-dragon{font-size:68px;display:block;margin:0 auto 14px;animation:evo-bob 1.3s ease-in-out infinite}
+  @keyframes evo-bob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.04)}}
+  .evo-title{
+    font-family:'Silkscreen';font-size:13px;letter-spacing:.14em;
+    color:#e0d0ff;margin-bottom:4px;
+    text-shadow:0 0 20px rgba(180,140,255,.7);
+  }
+  .evo-lv{font-size:11px;color:#b09fff;letter-spacing:.2em;margin-bottom:20px}
+  .evo-unlocks{
+    background:rgba(255,255,255,.05);border-radius:13px;padding:13px 14px;
+    margin-bottom:20px;text-align:left;font-size:10px;color:#c9bfff;line-height:2;
+  }
+  .evo-unlocks .evo-row{display:flex;align-items:center;gap:8px}
+  .evo-unlocks .evo-row em{color:#e8c4ff;font-style:normal;font-weight:600}
+  .evo-note{
+    font-size:9.5px;opacity:.6;text-align:center;margin-top:10px;
+    letter-spacing:.08em;line-height:1.8;color:#a89ddf;
+  }
+  .evo-btn{
+    font:inherit;font-family:'Silkscreen';font-size:11px;letter-spacing:.1em;
+    padding:11px 20px;border:1.5px solid rgba(200,160,255,.45);
+    background:linear-gradient(135deg,#5a3ea8,#3d2688);color:#ede0ff;
+    border-radius:22px;cursor:pointer;width:100%;
+    box-shadow:0 4px 22px rgba(130,80,230,.45);transition:opacity .2s;
+  }
+  .evo-btn:hover{opacity:.85}
   /* ---------- token overlay ---------- */
   .overlay{
     position:fixed;inset:0;background:rgba(12,9,30,.94);z-index:50;
@@ -266,6 +311,22 @@
 
   <div class="sync" id="sync">SAVING …</div>
 
+  <!-- 进化仪式 -->
+  <div class="evo-overlay" id="evo-overlay" style="display:none">
+    <div class="evo-card">
+      <span class="evo-stars">✦ ✧ ✦ ✧ ✦</span>
+      <span class="evo-dragon">🐉</span>
+      <div class="evo-title">龙崽进化啦！</div>
+      <div class="evo-lv">· LV.6 · 正式成为真龙 ·</div>
+      <div class="evo-unlocks">
+        <div class="evo-row">🪽 <span><em>小翅膀</em> — 衣柜新配件</span></div>
+        <div class="evo-row">🔮 <span><em>龙珠</em> &nbsp;&nbsp;— 玩具箱新玩具</span></div>
+        <div class="evo-note">从 🐲 变成 🐉 的那一刻<br>龙龙和芷萱的崽崽正式长大了 💜</div>
+      </div>
+      <button class="evo-btn" onclick="closeEvoCeremony()">🎉 &nbsp;见证这历史一刻！</button>
+    </div>
+  </div>
+
   <div class="overlay" id="overlay" style="display:none">
     <div class="card">
       <h2>PARENT CHECK-IN</h2>
@@ -297,13 +358,15 @@
     {id:'cap',    emoji:'🧢', name:'小帽子', lv:2, pos:'head'},
     {id:'scarf',  emoji:'🧣', name:'小围巾', lv:2, pos:'neck'},
     {id:'shades', emoji:'🕶️', name:'小墨镜', lv:3, pos:'face'},
-    {id:'crown',  emoji:'👑', name:'小皇冠', lv:5, pos:'head'}
+    {id:'crown',  emoji:'👑', name:'小皇冠', lv:5, pos:'head'},
+    {id:'wings',  emoji:'🪽', name:'小翅膀', lv:6, pos:'wing'}
   ];
   // 玩具箱：gift 是爸爸妈妈送的，不用解锁；选中的玩具会摆在崽崽身边，点它 = 抱抱
   const TOYBOX = [
     {id:'mama_plush', emoji:'🧸', name:'小龙公仔', gift:'💝 妈妈买的'},
     {id:'ball',       emoji:'⚽', name:'小皮球', lv:3},
-    {id:'duck',       emoji:'🦆', name:'小黄鸭', lv:4}
+    {id:'duck',       emoji:'🦆', name:'小黄鸭', lv:4},
+    {id:'orb',        emoji:'🔮', name:'龙珠',   lv:6}
   ];
 
   // 饱食度每小时 -3、心情每小时 -2，最低只会掉到 15（崽崽永远不会有事，只会想爸爸妈妈）
@@ -441,6 +504,7 @@
       `累计照顾 · 🍙${baby.feeds||0} 🎾${baby.plays||0} 🤍${baby.pats||0} 🧸${baby.hugs||0}`;
     renderAcc();
     if(document.getElementById('drawer').classList.contains('open')) renderDrawer();
+    checkEvoCeremony(lv);
   }
 
   // 把穿着的配饰画到崽崽身上、把选中的玩具摆到地上
@@ -532,6 +596,23 @@
     el.classList.add('show');
     clearTimeout(msgTimer);
     msgTimer = setTimeout(()=>el.classList.remove('show'), 2200);
+  }
+
+  // ---- 进化仪式 ----
+  let _evoCeremonyShown = false; // 每次 page load 只显示一次
+  function checkEvoCeremony(lv){
+    if(_evoCeremonyShown) return;
+    if(lv < 6) return;
+    if(localStorage.getItem('evo6-seen')) return;
+    _evoCeremonyShown = true;
+    setTimeout(()=>{ document.getElementById('evo-overlay').style.display = 'flex'; }, 800);
+  }
+  function closeEvoCeremony(){
+    localStorage.setItem('evo6-seen','1');
+    const el = document.getElementById('evo-overlay');
+    el.style.opacity = '0';
+    el.style.transition = 'opacity .4s';
+    setTimeout(()=>{ el.style.display = 'none'; el.style.opacity = ''; el.style.transition = ''; }, 420);
   }
 
   // auto-login：和 index.html 共用密钥，兼容 moments.html 的旧 key
