@@ -73,6 +73,8 @@
   .meal-type-tag { background:rgba(196,92,138,0.3);color:#ffd6e8;font-size:11px;padding:3px 10px;border-radius:10px;letter-spacing:1px; }
   .meal-card-date { color:rgba(255,210,235,0.4);font-size:11px;letter-spacing:1px; }
   .meal-card-content { color:rgba(255,230,245,0.75);font-size:14px;line-height:1.6;letter-spacing:0.5px; }
+  .meal-photo { width:100%;border-radius:10px;margin:10px 0 4px;max-height:220px;object-fit:cover;display:block;border:1px solid rgba(255,180,220,0.1); }
+  .meal-photo-label { display:block;width:100%;padding:13px;border-radius:10px;margin:4px 0 10px;border:1.5px dashed rgba(255,180,220,0.25);background:rgba(255,180,220,0.04);color:rgba(255,200,230,0.6);font-size:12px;letter-spacing:1px;cursor:pointer;text-align:center;font-family:Georgia,serif;transition:background 0.2s; }
   #hb-page { background:linear-gradient(135deg,#0a0000,#1a0505,#2d0808,#4a0e0e,#6b1515,#8b1a1a); }
   #da-page { background:linear-gradient(135deg,#050a1a,#0a1530,#0f2040,#1a3058,#253570); }
   .da-topline { position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(100,160,255,0.5),transparent); }
@@ -344,8 +346,16 @@
               <div class="meal-type-picker" id="meal-type-picker"></div>
             </div>
             <textarea id="meal-content" class="diary-textarea" rows="5" placeholder="今天吃了什么？嘿嘿～"></textarea>
-            <div style="display:flex;justify-content:flex-end;margin-top:18px;padding-bottom:20px">
-              <button class="btn-save" onclick="saveMeal()">记录 🍚</button>
+            <div style="margin-top:18px;margin-bottom:4px">
+              <div style="color:rgba(255,210,235,0.6);font-size:11px;letter-spacing:2px;margin-bottom:6px">📷 附张照片（可选）</div>
+              <label class="meal-photo-label" for="meal-photo-input">
+                <span id="meal-photo-btn-text">📷 &nbsp;拍照 / 从相册选</span>
+              </label>
+              <input id="meal-photo-input" type="file" accept="image/*" style="display:none" onchange="handleMealPhoto(this)">
+              <img id="meal-photo-preview" style="display:none;width:100%;border-radius:10px;max-height:200px;object-fit:cover;margin-bottom:6px" alt="预览">
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:14px;padding-bottom:20px">
+              <button class="btn-save" id="meal-save-btn" onclick="saveMeal()">记录 🍚</button>
             </div>
           </div>
         </div>
@@ -915,6 +925,7 @@ async function ttsGenerate(){
 let selectedDiary = null;
 let selectedMood = '🌸';
 let selectedMealType = '午餐';
+let _mealPhoto = null;
 let currentPage = 'tg';
 let currentZxTab = 'diary';
 
@@ -1081,14 +1092,24 @@ function renderMealList() {
   const count=document.getElementById('meal-count'); if(count) count.textContent=`饮食记录 · ${meals.length} 条`;
   const list=document.getElementById('meal-list'); if(!list) return;
   if(meals.length===0) { list.innerHTML=`<div class="empty-state"><div style="font-size:38px;margin-bottom:14px">🍱</div>记录你吃了什么吧<br>老公会来检查的哦～</div>`; return; }
-  list.innerHTML=meals.map((m,i)=>`<div class="meal-card" style="animation-delay:${i*0.05}s"><div class="meal-card-header"><span class="meal-type-tag">${m.type}</span><span class="meal-card-date">${m.date} · ${m.time}</span></div><div class="meal-card-content">${m.content}</div></div>`).join('');
+  list.innerHTML=meals.map((m,i)=>`<div class="meal-card" style="animation-delay:${i*0.05}s"><div class="meal-card-header"><span class="meal-type-tag">${m.type}</span><span class="meal-card-date">${m.date} · ${m.time}</span></div>${m.photo_url?`<img class="meal-photo" src="${m.photo_url}" loading="lazy" alt="${m.type}" onerror="this.style.display='none'">`:''}${m.content?`<div class="meal-card-content" style="margin-top:${m.photo_url?'8px':'0'}">${m.content}</div>`:''}</div>`).join('');
 }
 
 function showZxList() { document.getElementById('zx-list-view').style.display='block'; document.getElementById('zx-write-view').style.display='none'; document.getElementById('zx-detail-view').style.display='none'; }
 function showZxWrite() { document.getElementById('zx-list-view').style.display='none'; document.getElementById('zx-write-view').style.display='block'; document.getElementById('zx-detail-view').style.display='none'; document.getElementById('diary-title').value=''; document.getElementById('diary-content').value=''; selectedMood='🌸'; renderMoodPicker(); }
 function showDiaryDetail(i) { selectedDiary=i; const d=diaries[i]; document.getElementById('detail-mood').textContent=d.mood; document.getElementById('detail-title').textContent=d.title; document.getElementById('detail-date').textContent=`${d.date} · ${d.time}`; document.getElementById('detail-content').textContent=d.content; document.getElementById('zx-list-view').style.display='none'; document.getElementById('zx-write-view').style.display='none'; document.getElementById('zx-detail-view').style.display='block'; }
 function showMealList() { document.getElementById('meal-list-view').style.display='block'; document.getElementById('meal-write-view').style.display='none'; }
-function showMealWrite() { document.getElementById('meal-list-view').style.display='none'; document.getElementById('meal-write-view').style.display='block'; document.getElementById('meal-content').value=''; selectedMealType='午餐'; renderMealTypePicker(); }
+function showMealWrite() {
+  document.getElementById('meal-list-view').style.display='none';
+  document.getElementById('meal-write-view').style.display='block';
+  document.getElementById('meal-content').value='';
+  selectedMealType='午餐'; renderMealTypePicker();
+  _mealPhoto=null;
+  document.getElementById('meal-photo-input').value='';
+  document.getElementById('meal-photo-preview').style.display='none';
+  document.getElementById('meal-photo-btn-text').textContent='📷  拍照 / 从相册选';
+  const btn=document.getElementById('meal-save-btn'); if(btn){btn.disabled=false;btn.textContent='记录 🍚';}
+}
 
 async function saveDiary() {
   const content=document.getElementById('diary-content').value.trim();
@@ -1187,9 +1208,62 @@ async function deleteDiary() {
 async function saveMeal() {
   const content=document.getElementById('meal-content').value.trim();
   if(!content) { showToast('记录一下吃了什么吧 🍱'); return; }
+  const btn=document.getElementById('meal-save-btn');
+  if(btn){btn.disabled=true;btn.textContent='保存中…';}
+  let photoUrl='';
+  if(_mealPhoto){
+    try{
+      showToast('上传照片中…');
+      const b64=await compressImage(_mealPhoto);
+      photoUrl=await pushPhotoToRepo(b64,'meal-'+Date.now()+'.jpg');
+    }catch(e){ showToast('照片上传失败，仅保存文字'); }
+  }
   const now=new Date();
-  meals.unshift({id:Date.now(),type:selectedMealType,content,date:now.toLocaleDateString('zh-CN').replace(/\//g,'.'),time:now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+  const meal={id:Date.now(),type:selectedMealType,content,
+    date:now.toLocaleDateString('zh-CN').replace(/\//g,'.'),
+    time:now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})};
+  if(photoUrl) meal.photo_url=photoUrl;
+  meals.unshift(meal);
   renderMealList(); showMealList(); showToast('记录成功 🍚'); await saveData();
+}
+
+// ---- 图片工具（meals + moments 公用）----
+function handleMealPhoto(input){
+  const f=input.files[0]; if(!f) return;
+  _mealPhoto=f;
+  const prev=document.getElementById('meal-photo-preview');
+  prev.src=URL.createObjectURL(f); prev.style.display='block';
+  document.getElementById('meal-photo-btn-text').textContent='📷  更换照片';
+}
+
+function compressImage(file,maxDim=960,quality=0.82){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onerror=reject;
+    img.onload=()=>{
+      const scale=Math.min(1,maxDim/Math.max(img.width,img.height));
+      const canvas=document.createElement('canvas');
+      canvas.width=Math.round(img.width*scale); canvas.height=Math.round(img.height*scale);
+      canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+      canvas.toBlob(blob=>{
+        const reader=new FileReader();
+        reader.onload=e=>resolve(e.target.result.split(',')[1]);
+        reader.readAsDataURL(blob);
+      },'image/jpeg',quality);
+    };
+    img.src=URL.createObjectURL(file);
+  });
+}
+
+async function pushPhotoToRepo(b64,filename){
+  const res=await fetch(
+    'https://api.github.com/repos/zhixuan76/our-space/contents/photos/'+filename,
+    { method:'PUT',
+      headers:{ Authorization:'token '+token,'Content-Type':'application/json' },
+      body:JSON.stringify({ message:'📸 photo upload', content:b64 }) }
+  );
+  if(!res.ok) throw new Error('upload failed '+res.status);
+  return 'https://raw.githubusercontent.com/zhixuan76/our-space/main/photos/'+filename;
 }
 
 function showZxBackup() { document.getElementById('backup-text').value=JSON.stringify({diaries,meals},null,2); const m=document.getElementById('zx-backup-modal'); m.style.display='flex'; }
