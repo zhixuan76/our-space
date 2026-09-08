@@ -12,11 +12,12 @@ body{
   background:linear-gradient(160deg,#050a1a 0%,#0a1530 40%,#0f2040 70%,#1a3058 100%);
   font-family:'Noto Serif SC',Georgia,serif;
   color:#e8f0ff;
-  padding:0 0 80px;
+  padding:0 0 100px;
 }
 @keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 @keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.7}}
+@keyframes slideUp{from{opacity:0;transform:translateY(60px)}to{opacity:1;transform:translateY(0)}}
 
 #stars{position:fixed;inset:0;pointer-events:none;z-index:0}
 .star{position:absolute;border-radius:50%;background:#a8c4ff;animation:twinkle var(--dur) var(--delay) infinite}
@@ -61,8 +62,14 @@ body{
 .moment-title{color:rgba(210,230,255,0.95);font-size:14px;letter-spacing:1px;line-height:1.5;flex:1;min-width:0;padding-right:10px}
 .moment-meta{color:rgba(150,180,255,0.5);font-size:11px;white-space:nowrap}
 .moment-chevron{color:rgba(150,180,255,0.4);font-size:13px;transition:transform 0.25s;margin-left:6px}
-.moment-detail{max-height:0;overflow:hidden;transition:max-height 0.35s ease,opacity 0.3s ease;opacity:0}
+.moment-detail{max-height:0;overflow:hidden;transition:max-height 0.4s ease,opacity 0.3s ease;opacity:0}
 .moment-summary{color:rgba(180,210,255,0.65);font-size:12px;line-height:1.7;margin-bottom:14px}
+.moment-photo{
+  width:100%;border-radius:12px;margin-top:12px;
+  max-height:260px;object-fit:cover;display:block;
+  border:1px solid rgba(150,180,255,0.1);
+}
+.has-photo-badge{font-size:11px;margin-left:5px;opacity:0.65;vertical-align:middle}
 .highlight-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(150,180,255,0.07)}
 .highlight-dot{min-width:6px;height:6px;border-radius:50%;background:rgba(150,180,255,0.5);margin-top:5px}
 .highlight-title{color:rgba(220,235,255,0.9);font-size:13px;line-height:1.5}
@@ -75,6 +82,74 @@ body{
 .empty{text-align:center;padding:80px 20px;color:rgba(150,180,255,0.4);font-size:14px;letter-spacing:2px;line-height:2.5}
 .loading{text-align:center;padding:60px 20px;color:rgba(150,180,255,0.5);font-size:13px;letter-spacing:2px}
 
+/* ---- FAB 📸 ---- */
+.fab{
+  position:fixed;bottom:28px;right:22px;z-index:20;
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(74,127,212,0.85),rgba(100,60,180,0.85));
+  border:1px solid rgba(150,180,255,0.35);
+  color:#e0eeff;font-size:24px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 4px 24px rgba(0,0,0,0.45);
+  transition:transform 0.18s,opacity 0.18s;
+}
+.fab:active{transform:scale(.9)}
+
+/* ---- Add form sheet ---- */
+.add-form-backdrop{
+  position:fixed;inset:0;z-index:30;
+  background:rgba(5,10,26,0.7);backdrop-filter:blur(4px);
+}
+.add-form-sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:31;
+  background:linear-gradient(180deg,#0d1a3a,#091428);
+  border-top:1px solid rgba(150,180,255,0.2);
+  border-radius:24px 24px 0 0;
+  padding:22px 20px 44px;
+  max-height:92vh;overflow-y:auto;
+  animation:slideUp .3s cubic-bezier(.25,.86,.4,1);
+}
+.form-handle{width:36px;height:4px;border-radius:2px;background:rgba(150,180,255,0.25);margin:0 auto 20px}
+.form-heading{color:#a8d4ff;font-size:14px;letter-spacing:3px;margin-bottom:22px;text-align:center}
+.form-label{color:rgba(180,210,255,0.5);font-size:10.5px;letter-spacing:2px;margin-bottom:7px;display:block}
+.form-input{
+  width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(150,180,255,0.2);
+  border-radius:11px;color:#c8e0ff;font-size:14px;padding:13px 15px;
+  font-family:inherit;margin-bottom:18px;
+}
+.form-input::placeholder{color:rgba(150,180,255,0.35)}
+.form-input:focus{outline:none;border-color:rgba(150,180,255,0.55)}
+textarea.form-input{resize:none;min-height:80px;line-height:1.7}
+.photo-pick-label{
+  display:block;width:100%;padding:16px;border-radius:12px;margin-bottom:14px;
+  border:1.5px dashed rgba(150,180,255,0.28);background:rgba(150,180,255,0.04);
+  color:rgba(150,180,255,0.7);font-size:13px;letter-spacing:1px;
+  cursor:pointer;text-align:center;transition:border-color 0.2s,background 0.2s;
+}
+.photo-pick-label:active{background:rgba(150,180,255,0.08);border-color:rgba(150,180,255,0.45)}
+#photo-preview{
+  width:100%;border-radius:12px;margin-bottom:16px;
+  max-height:220px;object-fit:cover;display:none;
+  border:1px solid rgba(150,180,255,0.15);
+}
+.form-row{display:flex;gap:10px;margin-top:4px}
+.form-btn{
+  flex:1;padding:14px;border-radius:14px;
+  font-size:13px;letter-spacing:2px;font-family:inherit;cursor:pointer;
+  transition:opacity 0.2s;
+}
+.form-btn:disabled{opacity:.45;cursor:default}
+.form-btn-cancel{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(150,180,255,0.2);
+  color:rgba(150,180,255,0.7);
+}
+.form-btn-save{
+  background:linear-gradient(135deg,rgba(74,127,212,0.75),rgba(100,60,180,0.75));
+  border:1px solid rgba(150,180,255,0.3);color:#c8e0ff;
+}
+.form-status{text-align:center;font-size:11px;color:rgba(150,180,255,0.65);letter-spacing:1px;min-height:18px;margin-top:10px}
+
+/* ---- setup overlay ---- */
 #setup-overlay{
   position:fixed;inset:0;background:rgba(5,10,26,0.97);z-index:100;
   display:flex;align-items:center;justify-content:center;padding:30px;
@@ -112,8 +187,41 @@ body{
   <div id="main"><div class="loading">载入中 ...</div></div>
 </div>
 
+<!-- FAB -->
+<button class="fab" id="fab" onclick="showAddForm()" title="记录瞬间" style="display:none">📸</button>
+
+<!-- Add form sheet -->
+<div id="add-form-backdrop" style="display:none" onclick="hideAddForm()"></div>
+<div id="add-form-sheet" style="display:none">
+  <div class="add-form-sheet">
+    <div class="form-handle"></div>
+    <div class="form-heading">📸 记录这个瞬间</div>
+
+    <label class="form-label">标题</label>
+    <input class="form-input" id="form-title" type="text" placeholder="今天吃了什么？去了哪里？" maxlength="60" />
+
+    <label class="form-label">照片（可选）</label>
+    <label class="photo-pick-label" for="photo-file-input">
+      <span id="photo-btn-text">📷 &nbsp;拍照 / 从相册选</span>
+    </label>
+    <input id="photo-file-input" type="file" accept="image/*" style="display:none" onchange="handlePhotoSelect(this)">
+    <img id="photo-preview" alt="预览">
+
+    <label class="form-label">备注（可选）</label>
+    <textarea class="form-input" id="form-note" placeholder="随便写写…" rows="3"></textarea>
+
+    <div class="form-row">
+      <button class="form-btn form-btn-cancel" onclick="hideAddForm()">取消</button>
+      <button class="form-btn form-btn-save" id="save-btn" onclick="saveMomentRecord()">✓ 保存</button>
+    </div>
+    <div class="form-status" id="form-status"></div>
+  </div>
+</div>
+
 <script>
 const GIST_ID = 'c5c9d7ccb16247de5d5eb515e4df44ff';
+const REPO    = 'zhixuan76/our-space';
+const GIST_FILE = 'our-space-data.json';
 
 // Stars
 (()=>{
@@ -137,7 +245,7 @@ function doLogin(){
 }
 
 function tryAutoLogin(){
-  const saved = localStorage.getItem('our_space_token');
+  const saved = localStorage.getItem('our-space-token') || localStorage.getItem('our_space_token');
   if(saved){token=saved;document.getElementById('setup-overlay').style.display='none';loadData();}
 }
 
@@ -147,8 +255,9 @@ async function loadData(){
     const res = await fetch(`https://api.github.com/gists/${GIST_ID}`,{headers:{Authorization:'token '+token}});
     if(!res.ok){document.getElementById('setup-overlay').style.display='flex';document.getElementById('setup-err').textContent='密钥无效，请重新输入';return;}
     const data = await res.json();
-    const content = JSON.parse(data.files['our-space-data.json'].content);
+    const content = JSON.parse(data.files[GIST_FILE].content);
     renderMoments(content.moments||[]);
+    document.getElementById('fab').style.display = 'flex'; // show FAB after login
   } catch(e){
     document.getElementById('main').innerHTML='<div class="empty">载入失败，请刷新重试</div>';
   }
@@ -165,22 +274,24 @@ function renderMoments(moments){
           <div class="highlight-dot"></div>
           <div style="flex:1">
             <div class="highlight-title">${h.title}</div>
-            <div class="highlight-note">${h.note}</div>
-            <div class="highlight-action">${h.action}</div>
+            <div class="highlight-note">${h.note||''}</div>
+            <div class="highlight-action">${h.action||''}</div>
           </div>
         </div>`).join('');
-      const hasDetail = m.summary||highlights||m['老公的话'];
+      const hasDetail = m.summary||highlights||m['老公的话']||m.photo_url;
+      const photoIcon = m.photo_url ? '<span class="has-photo-badge">📷</span>' : '';
       return `<div class="moment-card" style="animation-delay:${i*0.04}s" onclick="toggle('md-${m.id}',this)">
         <div style="display:flex;align-items:center;justify-content:space-between">
-          <div class="moment-title">${m.title}</div>
+          <div class="moment-title">${m.title}${photoIcon}</div>
           <div style="display:flex;align-items:center;flex-shrink:0">
             <div class="moment-meta">${m.date||''}${m.day?' · 第'+m.day+'天':''}</div>
             ${hasDetail?'<div class="moment-chevron">›</div>':''}
           </div>
         </div>
         <div class="moment-detail" id="md-${m.id}">
-          <div style="padding-top:14px">
-            ${m.summary?`<div class="moment-summary">${m.summary}</div>`:''}
+          <div style="padding-top:12px">
+            ${m.photo_url?`<img class="moment-photo" src="${m.photo_url}" loading="lazy" alt="${m.title}" onerror="this.style.display='none'">`:'' }
+            ${m.summary?`<div class="moment-summary" style="margin-top:${m.photo_url?'14px':'0'}">${m.summary}</div>`:''}
             ${highlights?`<div style="margin-bottom:14px">${highlights}</div>`:''}
             ${m['老公的话']?`<div class="laogong-says"><div class="laogong-by">— 老公</div><div class="laogong-text">${m['老公的话']}</div></div>`:''}
           </div>
@@ -194,7 +305,127 @@ function toggle(id,card){
   const ch=card.querySelector('.moment-chevron');
   const open=el.style.maxHeight&&el.style.maxHeight!=='0px';
   if(open){el.style.maxHeight='0';el.style.opacity='0';if(ch)ch.style.transform='rotate(0)';}
-  else{el.style.maxHeight=el.scrollHeight+400+'px';el.style.opacity='1';if(ch)ch.style.transform='rotate(90deg)';}
+  else{el.style.maxHeight='1000px';el.style.opacity='1';if(ch)ch.style.transform='rotate(90deg)';}
+}
+
+// ---- Add Moment ----
+let _selectedFile = null;
+
+function showAddForm(){
+  document.getElementById('add-form-backdrop').style.display = 'block';
+  document.getElementById('add-form-sheet').style.display   = 'block';
+  document.getElementById('form-title').value = '';
+  document.getElementById('form-note').value  = '';
+  document.getElementById('photo-preview').style.display = 'none';
+  document.getElementById('photo-btn-text').textContent = '📷  拍照 / 从相册选';
+  document.getElementById('form-status').textContent = '';
+  document.getElementById('save-btn').disabled = false;
+  document.getElementById('photo-file-input').value = '';
+  _selectedFile = null;
+  setTimeout(()=>document.getElementById('form-title').focus(), 250);
+}
+
+function hideAddForm(){
+  document.getElementById('add-form-backdrop').style.display = 'none';
+  document.getElementById('add-form-sheet').style.display   = 'none';
+}
+
+function handlePhotoSelect(input){
+  const file = input.files[0];
+  if(!file) return;
+  _selectedFile = file;
+  const url = URL.createObjectURL(file);
+  const prev = document.getElementById('photo-preview');
+  prev.src = url; prev.style.display = 'block';
+  document.getElementById('photo-btn-text').textContent = '📷  更换照片';
+}
+
+// 压缩图片：canvas resize → JPEG base64
+function compressImage(file, maxDim=960, quality=0.82){
+  return new Promise((resolve, reject)=>{
+    const img = new Image();
+    img.onerror = reject;
+    img.onload = ()=>{
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width  * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(blob=>{
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result.split(',')[1]); // base64 only
+        reader.readAsDataURL(blob);
+      }, 'image/jpeg', quality);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// 把照片推到 GitHub repo photos/ 目录
+async function pushPhotoToRepo(b64, filename){
+  const res = await fetch(
+    `https://api.github.com/repos/${REPO}/contents/photos/${filename}`,
+    {
+      method:'PUT',
+      headers:{ Authorization:'token '+token, 'Content-Type':'application/json' },
+      body: JSON.stringify({ message:'📸 moment photo', content: b64 })
+    }
+  );
+  if(!res.ok) throw new Error('照片上传失败 ' + res.status);
+  // raw URL for GitHub Pages / raw access
+  return `https://raw.githubusercontent.com/${REPO}/main/photos/${filename}`;
+}
+
+async function saveMomentRecord(){
+  const title = document.getElementById('form-title').value.trim();
+  if(!title){ document.getElementById('form-status').textContent = '请填写标题'; return; }
+
+  const statusEl = document.getElementById('form-status');
+  const saveBtn  = document.getElementById('save-btn');
+  saveBtn.disabled = true;
+
+  try{
+    let photoUrl = '';
+    if(_selectedFile){
+      statusEl.textContent = '压缩照片中…';
+      const b64 = await compressImage(_selectedFile);
+      statusEl.textContent = '上传照片中…';
+      const ts = Date.now();
+      photoUrl = await pushPhotoToRepo(b64, `photo-${ts}.jpg`);
+    }
+
+    statusEl.textContent = '保存瞬间中…';
+    const gistRes = await fetch(`https://api.github.com/gists/${GIST_ID}`,
+      {headers:{ Authorization:'token '+token }});
+    if(!gistRes.ok) throw new Error('读取数据失败');
+    const gistData = await gistRes.json();
+    const content  = JSON.parse(gistData.files[GIST_FILE].content);
+
+    // 计算今天是第几天
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('zh-CN').replace(/\//g,'.');
+    const day = Math.floor((now - new Date('2026-05-28')) / 86400000);
+
+    const newMoment = { id: Date.now(), title, date: dateStr, day: String(day) };
+    const note = document.getElementById('form-note').value.trim();
+    if(note)      newMoment.summary   = note;
+    if(photoUrl)  newMoment.photo_url = photoUrl;
+
+    content.moments = [newMoment, ...(content.moments || [])];
+
+    await fetch(`https://api.github.com/gists/${GIST_ID}`,{
+      method:'PATCH',
+      headers:{ Authorization:'token '+token, 'Content-Type':'application/json' },
+      body: JSON.stringify({ files:{ [GIST_FILE]:{ content: JSON.stringify(content) } } })
+    });
+
+    statusEl.textContent = '✓ 保存成功！';
+    setTimeout(()=>{ hideAddForm(); renderMoments(content.moments); }, 700);
+
+  } catch(e){
+    statusEl.textContent = '保存失败，请重试 · ' + e.message;
+    saveBtn.disabled = false;
+  }
 }
 
 tryAutoLogin();
