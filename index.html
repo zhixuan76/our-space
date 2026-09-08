@@ -1031,7 +1031,7 @@ function updateDates() {
   const now = new Date();
   const together = new Date('2026-05-28');
   const meet = new Date('2024-07-15');
-  const togetherDays = Math.floor((now-together)/86400000)+1;
+  const togetherDays = Math.floor((now-together)/86400000);
   const meetDays = Math.floor((now-meet)/86400000)+1;
   const el = document.getElementById('days-count'); if(el) el.textContent=togetherDays;
   const md = document.getElementById('meet-days'); if(md) md.textContent=`相遇 ${meetDays} 天了`;
@@ -1661,7 +1661,7 @@ function renderTodos() {
   const dayEl = document.getElementById('mart-date-line');
   if (dayEl) {
     const together = new Date('2026-05-28');
-    const day = Math.floor((now-together)/86400000)+1;
+    const day = Math.floor((now-together)/86400000);
     dayEl.innerHTML = `<span>${now.toLocaleDateString('zh-CN').replace(/\//g,'.')}</span><span>第 ${day} 天</span>`;
   }
   const pending = todos.filter(t=>!t.done);
