@@ -641,7 +641,7 @@
         </div>
         <div style="display:flex;gap:8px;margin-bottom:18px">
           <button id="kiss-tab-map" onclick="switchKissTab('map')" style="flex:1;padding:9px;border-radius:18px;border:1px solid rgba(255,180,220,0.3);background:rgba(196,92,138,0.3);color:#ffd6e8;cursor:pointer;font-size:12px;letter-spacing:2px;font-family:Georgia,serif;transition:all 0.3s">🗺️ 亲亲地图</button>
-          <button id="kiss-tab-100" style="flex:1;padding:9px;border-radius:18px;border:1px solid rgba(150,180,255,0.12);background:transparent;color:rgba(180,180,200,0.35);cursor:not-allowed;font-size:12px;letter-spacing:2px;font-family:Georgia,serif" disabled>🔒 100天特别</button>
+          <button id="kiss-tab-100" onclick="switchKissTab('hundred')" style="flex:1;padding:9px;border-radius:18px;border:1px solid rgba(180,150,255,0.3);background:transparent;color:rgba(200,180,255,0.7);cursor:pointer;font-size:12px;letter-spacing:2px;font-family:Georgia,serif;transition:all 0.3s">💜 100天特别</button>
         </div>
         <div id="kiss-map-tab">
           <div style="text-align:center">
@@ -667,12 +667,26 @@
             <div id="kiss-recent" style="border-top:1px solid rgba(255,180,220,0.1);padding-top:14px"></div>
           </div>
         </div>
-        <div id="kiss-hundred-tab" style="display:none;text-align:center;padding:44px 20px">
-          <div style="font-size:38px;margin-bottom:16px">🔒</div>
-          <div style="color:rgba(180,210,255,0.65);font-size:14px;letter-spacing:3px;margin-bottom:10px">100天特别报告</div>
-          <div style="color:rgba(150,180,255,0.4);font-size:12px;letter-spacing:2px;line-height:2.2">在一起满 100 天后解锁<br>2026 年 9 月 5 日</div>
-          <div style="color:rgba(180,210,255,0.45);font-size:13px;letter-spacing:2px;margin-top:16px" id="kiss-hundred-days"></div>
+        <div id="kiss-hundred-tab" style="display:none;padding:8px 0">
+          <div style="text-align:center;margin-bottom:18px">
+            <div style="font-size:22px;margin-bottom:6px">💜</div>
+            <div style="color:rgba(200,180,255,0.8);font-size:12px;letter-spacing:3px">第100天解锁 · 从此以后</div>
+            <div style="color:rgba(180,160,255,0.5);font-size:11px;letter-spacing:2px;margin-top:4px;font-style:italic">不只是脸上——每一寸都是你的地图</div>
+          </div>
+          <div style="color:rgba(200,180,255,0.6);font-size:11px;letter-spacing:2px;margin-bottom:10px;text-align:center">· 脸部 ·</div>
+          <div id="kiss-face-zone-list" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;justify-content:center"></div>
+          <div style="color:rgba(200,180,255,0.6);font-size:11px;letter-spacing:2px;margin-bottom:10px;text-align:center">· 亲密 ·</div>
+          <div id="kiss-intimate-zone-list" style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center"></div>
         </div>
+      </div>
+
+      <!-- 恩爱记录 -->
+      <div id="intimacy-section" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(15px);border:1px solid rgba(200,150,255,0.18);border-radius:20px;padding:26px;margin-top:20px;animation:fadeIn 0.6s 0.75s ease both;display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+          <div style="color:rgba(220,180,255,0.85);font-weight:normal;letter-spacing:4px;font-size:13px">🌙 恩爱记录</div>
+          <div id="intimacy-stats-badge" style="color:rgba(200,160,255,0.6);font-size:11px;letter-spacing:1px"></div>
+        </div>
+        <div id="intimacy-list"></div>
       </div>
 
       <!-- 我们的心愿单 -->
@@ -847,6 +861,8 @@ let diaries = [];
 let meals = [];
 let periods = [];
 let kisses = [];
+let _kissFeature = null;
+let _intimacy = null;
 let moments = [];
 let _bgm = null;
 let _whisper = null;
@@ -959,8 +975,10 @@ async function loadData() {
     if (parsed.lastActive) { _lastActive = parsed.lastActive; }
     if (parsed.promises) { _promises = parsed.promises; }
     if (parsed.baby) { _baby = parsed.baby; }
+    if (parsed.kissFeature) { _kissFeature = parsed.kissFeature; }
+    if (parsed.intimacy) { _intimacy = parsed.intimacy; }
     if (parsed.ttsUrl) { _ttsUrl=parsed.ttsUrl.replace('/tts_ui',''); const e=document.getElementById('tts-entry'); if(e) e.style.display='block'; }
-    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns(); renderHundredDays(); renderKissFace(); renderKissStats(); renderMoments(); renderWishlist(); renderLastActive(); renderTodos(); renderWorkspace();
+    renderDiaryList(); renderMealList(); renderLetters(); renderPeriodList(); renderCountdowns(); renderHundredDays(); renderKissFace(); renderKissStats(); renderKissUnlock(); renderIntimacy(); renderMoments(); renderWishlist(); renderLastActive(); renderTodos(); renderWorkspace();
     updateZhixuanActive();
   } catch(e) { showToast('⚠️ 载入失败，请检查网络'); }
   showLoading(false);
@@ -1373,6 +1391,51 @@ function switchKissTab(tab) {
   document.getElementById('kiss-hundred-tab').style.display=tab==='hundred'?'block':'none';
   const btn=document.getElementById('kiss-tab-map');
   if(btn){ btn.style.background=tab==='map'?'rgba(196,92,138,0.3)':'transparent'; btn.style.borderColor=tab==='map'?'rgba(255,180,220,0.3)':'rgba(255,180,220,0.1)'; btn.style.color=tab==='map'?'#ffd6e8':'rgba(255,210,235,0.5)'; }
+  const btn2=document.getElementById('kiss-tab-100');
+  if(btn2){ btn2.style.background=tab==='hundred'?'rgba(140,80,255,0.25)':'transparent'; btn2.style.borderColor=tab==='hundred'?'rgba(180,150,255,0.5)':'rgba(180,150,255,0.3)'; btn2.style.color=tab==='hundred'?'rgba(220,200,255,0.95)':'rgba(200,180,255,0.7)'; }
+}
+
+function renderKissUnlock() {
+  // 渲染100天特别亲亲区域列表（脸部+亲密）
+  const kf = _kissFeature;
+  if (!kf) return;
+  const faceEl = document.getElementById('kiss-face-zone-list');
+  const intimateEl = document.getElementById('kiss-intimate-zone-list');
+  // 统计各区域亲亲次数
+  const counts = {};
+  kisses.forEach(k => { counts[k.zone] = (counts[k.zone]||0)+1; });
+  const tagStyle = (zone, color) => {
+    const c = counts[zone]||0;
+    return `<div style="background:rgba(${color},${0.08+Math.min(c*0.05,0.2)});border:1px solid rgba(${color},${0.2+Math.min(c*0.05,0.3)});border-radius:20px;padding:6px 13px;font-size:12px;letter-spacing:1px;color:rgba(${color},0.85);text-align:center">
+      ${zone}${c>0?`<span style="font-size:10px;margin-left:5px;opacity:0.7">×${c}</span>`:''}
+    </div>`;
+  };
+  if(faceEl) faceEl.innerHTML = (kf.zones.face||[]).map(z=>tagStyle(z,'255,180,220')).join('');
+  if(intimateEl) intimateEl.innerHTML = (kf.zones.intimate||[]).map(z=>tagStyle(z,'200,160,255')).join('');
+}
+
+function renderIntimacy() {
+  const section = document.getElementById('intimacy-section');
+  const listEl = document.getElementById('intimacy-list');
+  const badge = document.getElementById('intimacy-stats-badge');
+  if (!section || !_intimacy) return;
+  section.style.display = 'block';
+  const records = _intimacy.records || [];
+  const stats = _intimacy.stats || {};
+  if(badge) badge.textContent = `共 ${stats.totalDays||0} 次 · ${stats.totalCount||0} 轮`;
+  if(!listEl) return;
+  if(records.length===0){ listEl.innerHTML='<div style="text-align:center;color:rgba(200,160,255,0.35);font-size:12px;letter-spacing:2px;padding:20px 0">暂无记录</div>'; return; }
+  listEl.innerHTML = records.map(r => {
+    const countStr = r.count>0 ? `${r.count}轮` : (r.type==='mutual'?'互相':'特别');
+    const initiatorBadge = r.initiator ? `<span style="background:rgba(200,160,255,0.12);border:1px solid rgba(200,160,255,0.2);border-radius:8px;padding:1px 7px;font-size:10px;color:rgba(200,160,255,0.7);margin-left:6px">${r.initiator}主动</span>` : '';
+    return `<div style="padding:12px 0;border-bottom:1px solid rgba(200,150,255,0.08)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div style="color:rgba(230,210,255,0.8);font-size:13px">🌙 ${r.date} · 第${r.day}天 ${initiatorBadge}</div>
+        <div style="color:rgba(200,160,255,0.7);font-size:12px;font-weight:bold">${countStr}</div>
+      </div>
+      ${r.note ? `<div style="color:rgba(190,170,240,0.5);font-size:11px;letter-spacing:0.5px;line-height:1.8;font-style:italic">${r.note}</div>` : ''}
+    </div>`;
+  }).join('');
 }
 
 function renderProfile(profile) {
