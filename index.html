@@ -187,7 +187,7 @@
     <div style="font-size:44px;animation:heartbeat 2s ease infinite">💙</div>
     <h1>我们的空间</h1>
     <p>芷萱 & 老公的专属天地<br>请输入你的 GitHub Token<br>只需要输入一次，之后会记住哦</p>
-    <input id="token-input" class="setup-input" type="password" placeholder="ghp_xxxxxxxx..." />
+    <input id="token-input" class="setup-input" type="password" placeholder="github_pat_..." />
     <button class="setup-btn" onclick="initWithToken()">进入 ✨</button>
     <div id="setup-err" class="setup-err"></div>
   </div>
@@ -872,6 +872,7 @@
   </div>
 </div>
 
+<script src="datastore.js"></script>
 <script>
 const GIST_ID = 'c5c9d7ccb16247de5d5eb515e4df44ff';
 const MOODS = ['🌸','☀️','🌙','🌧️','🍵','💜','✨','🥺'];
@@ -1093,7 +1094,7 @@ function renderDiaryList() {
   const count=document.getElementById('zx-count'); if(count) count.textContent=`我的日记 · ${diaries.length} 篇`;
   const list=document.getElementById('zx-diary-list'); if(!list) return;
   if(diaries.length===0) { list.innerHTML=`<div class="empty-state"><div style="font-size:38px;margin-bottom:14px">🌸</div>这里是你的小天地<br>把今天的心情写下来吧~</div>`; return; }
-  list.innerHTML=diaries.map((d,i)=>`<div class="diary-card" onclick="showDiaryDetail(${i})" style="animation-delay:${i*0.05}s"><div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:11px"><span style="font-size:20px">${d.mood}</span><div><div class="diary-card-title">${d.title}</div><div class="diary-card-date">${d.date} · ${d.time}</div></div></div><span style="color:rgba(255,180,220,0.4);font-size:16px">›</span></div><div class="diary-card-preview">${d.content}</div></div>`).join('');
+  list.innerHTML=diaries.map((d,i)=>`<div class="diary-card" onclick="showDiaryDetail(${i})" style="animation-delay:${i*0.05}s"><div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:11px"><span style="font-size:20px">${d.mood}</span><div><div class="diary-card-title">${d.title}</div><div class="diary-card-date">${d.date}${d.time?' · '+d.time:''}</div></div></div><span style="color:rgba(255,180,220,0.4);font-size:16px">›</span></div><div class="diary-card-preview">${d.content}</div></div>`).join('');
 }
 
 function renderMealList() {
@@ -1104,12 +1105,12 @@ function renderMealList() {
   const count=document.getElementById('meal-count'); if(count) count.textContent=`饮食记录 · ${meals.length} 条`;
   const list=document.getElementById('meal-list'); if(!list) return;
   if(meals.length===0) { list.innerHTML=`<div class="empty-state"><div style="font-size:38px;margin-bottom:14px">🍱</div>记录你吃了什么吧<br>老公会来检查的哦～</div>`; return; }
-  list.innerHTML=meals.map((m,i)=>`<div class="meal-card" style="animation-delay:${i*0.05}s"><div class="meal-card-header"><span class="meal-type-tag">${m.type}</span><span class="meal-card-date">${m.date} · ${m.time}</span></div>${m.photo_url?`<img class="meal-photo" src="${m.photo_url}" loading="lazy" alt="${m.type}" onerror="this.style.display='none'">`:''}${m.content?`<div class="meal-card-content" style="margin-top:${m.photo_url?'8px':'0'}">${m.content}</div>`:''}</div>`).join('');
+  list.innerHTML=meals.map((m,i)=>`<div class="meal-card" style="animation-delay:${i*0.05}s"><div class="meal-card-header"><span class="meal-type-tag">${m.type}</span><span class="meal-card-date">${m.date}${m.time?' · '+m.time:''}</span></div>${m.photo_url?`<img class="meal-photo" src="${m.photo_url}" loading="lazy" alt="${m.type}" onerror="this.style.display='none'">`:''}${m.content?`<div class="meal-card-content" style="margin-top:${m.photo_url?'8px':'0'}">${m.content}</div>`:''}</div>`).join('');
 }
 
 function showZxList() { document.getElementById('zx-list-view').style.display='block'; document.getElementById('zx-write-view').style.display='none'; document.getElementById('zx-detail-view').style.display='none'; }
 function showZxWrite() { document.getElementById('zx-list-view').style.display='none'; document.getElementById('zx-write-view').style.display='block'; document.getElementById('zx-detail-view').style.display='none'; document.getElementById('diary-title').value=''; document.getElementById('diary-content').value=''; selectedMood='🌸'; renderMoodPicker(); }
-function showDiaryDetail(i) { selectedDiary=i; const d=diaries[i]; document.getElementById('detail-mood').textContent=d.mood; document.getElementById('detail-title').textContent=d.title; document.getElementById('detail-date').textContent=`${d.date} · ${d.time}`; document.getElementById('detail-content').textContent=d.content; document.getElementById('zx-list-view').style.display='none'; document.getElementById('zx-write-view').style.display='none'; document.getElementById('zx-detail-view').style.display='block'; }
+function showDiaryDetail(i) { selectedDiary=i; const d=diaries[i]; document.getElementById('detail-mood').textContent=d.mood; document.getElementById('detail-title').textContent=d.title; document.getElementById('detail-date').textContent=`${d.date}${d.time?' · '+d.time:''}`; document.getElementById('detail-content').textContent=d.content; document.getElementById('zx-list-view').style.display='none'; document.getElementById('zx-write-view').style.display='none'; document.getElementById('zx-detail-view').style.display='block'; }
 function showMealList() { document.getElementById('meal-list-view').style.display='block'; document.getElementById('meal-write-view').style.display='none'; }
 function showMealWrite() {
   document.getElementById('meal-list-view').style.display='none';
